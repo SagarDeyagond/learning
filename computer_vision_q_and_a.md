@@ -330,17 +330,21 @@ Suppose you’re training a CNN to detect cracks in industrial images:
 #### Class Weights in Loss Function
 - **Idea:** Modify the loss function (e.g., cross-entropy) to scale the contribution of each class inversely proportional to its frequency.
 - **Formula:** 
+
 $$
 \text{Weight for class } c = \left( \frac{1}{\text{frequency of class } c} \right) \quad \text{or} \quad \left( \frac{\text{total samples}}{\text{samples in class } c} \right)
 $$
 
+
 - **Example:** 
 For 900 "no crack" and 100 "crack":
+
 $$
 \text{Total samples} = 1000 \\\\[5pt]
 \text{Weight for ``no crack''} = \frac{1000}{900} \approx 1.11 \\\\[5pt]
 \text{Weight for ``crack''} = \frac{1000}{100} = 10
 $$
+
 - The loss penalizes "crack" misclassifications 10x more.
 
 
@@ -350,9 +354,11 @@ $$
 #### Focal Loss
 - **Idea:** Down-weight well-classified (easy) examples and focus on hard, often minority, examples using a modulating factor.
 - **Formula:** 
+
 $$
 FL(p_t) = -\alpha (1 - p_t)^\gamma \log(p_t)
 $$
+
 
 where:
 - ```α``` is the class weight  
@@ -732,16 +738,16 @@ $$
 - **Backpropagation**:
 - Output layer gradient:  
 
-  $$
-  \frac{\partial L}{\partial p} = p - y = [0.7 - 1, 0.3 - 0] = [-0.3, 0.3]
-  $$
+$$
+\frac{\partial L}{\partial p} = p - y = [0.7 - 1, 0.3 - 0] = [-0.3, 0.3]
+$$
 
 - Propagate back: Adjust dense layer weights, then pooling, then conv filters using the chain rule.
 - Update:  
 
-  $$
-  w_{\text{new}} = w_{\text{old}} - 0.01 \cdot \text{gradient} \quad (\text{assuming } \eta = 0.01)
-  $$
+$$
+w_{\text{new}} = w_{\text{old}} - 0.01 \cdot \text{gradient} \quad (\text{assuming } \eta = 0.01)
+$$
 
 
 ### ✅ Need for Backpropagation:
@@ -1742,6 +1748,7 @@ $$
 $$  
 
 where  
+
 $$ 
 \sigma'(z_2) = 0.577 \cdot (1 - 0.577) \approx 0.244 
 $$  
@@ -1774,6 +1781,7 @@ $$
   $$
 
 - **Gradient w.r.t. \( $w_1$ \)**:  
+
 $$ 
 \frac{\partial L}{\partial w_1} = -0.006 \cdot 1 \approx -0.006 
 $$
@@ -1856,10 +1864,18 @@ BN operates on a mini-batch of data (e.g., 32 images) and is typically applied b
 For a mini-batch \( B = \{x_1, x_2, ..., x_m\} \) (where \( m \) is batch size):
 
 - **Mean**:  
-$$ \mu_B = \frac{1}{m} \sum_{i=1}^{m} x_i $$
 
-- **Variance**:  
-$$ \sigma_B^2 = \frac{1}{m} \sum_{i=1}^{m} (x_i - \mu_B)^2 $$
+$$
+\mu_B = \frac{1}{m} \sum_{i=1}^{m} x_i 
+$$
+
+
+- **Variance**:
+
+$$ 
+\sigma_B^2 = \frac{1}{m} \sum_{i=1}^{m} (x_i - \mu_B)^2 
+$$
+
 
 ### 2. Normalize:
 Standardize each input:  
@@ -2001,35 +2017,35 @@ Gradient Descent uses the gradient (partial derivative of the loss with respect 
 - Forward pass generates predictions, and loss is calculated (e.g., cross-entropy for classification).
 - Example: 
 
-  $$ 
-  L = -\log(0.7) \approx 0.357 
-  $$  
+$$ 
+L = -\log(0.7) \approx 0.357 
+$$  
 
-  for prediction [0.3, 0.7] vs. ground truth [0, 1].
+for prediction [0.3, 0.7] vs. ground truth [0, 1].
 
 - **Calculate Gradients via Backpropagation**:
 - Gradient:  
 
-  $$
-  \frac{\partial L}{\partial w} 
-  $$  
+$$
+\frac{\partial L}{\partial w} 
+$$  
 
-  shows how much the loss changes with a small change in weight \( w \).
+shows how much the loss changes with a small change in weight \( w \).
 - Example:  
-  $$
-  \frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] 
-  $$  
+$$
+\frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] 
+$$  
 
-  propagated back to weights.
+propagated back to weights.
 
 - **Update Weights**:
 - Rule:
 
-  $$
-    w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
-    $$  
+$$
+w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
+$$  
 
-  where *$\eta$*   (learning rate) controls step size.
+where *$\eta$*   (learning rate) controls step size.
 - Direction: Negative gradient points downhill (toward lower loss).
 
 - **Iterate**:
@@ -2282,9 +2298,11 @@ w = w - \frac{\eta}{\sqrt{G_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
 $$
 
 - **Example**:  
+
 $$
 G_0 = 0,\quad \frac{\partial L}{\partial w} = -8,\quad G_1 = 64
 $$  
+
 
 $$
 w = 1 - \frac{0.1}{\sqrt{64 + 10^{-8}}} \cdot (-8) = 1.1
@@ -2302,11 +2320,13 @@ $$
 E[G^2]_t = \rho E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
 $$ 
 
+
 $$
 w = w - \frac{\eta}{\sqrt{E[G^2]_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
 $$
 
 - **Example**: 
+
 
 $$
 E[G^2]_0 = 0,\quad \frac{\partial L}{\partial w} = -8
@@ -2319,6 +2339,7 @@ $$
 $$
 w = 1 - \frac{0.1}{\sqrt{6.4}} \cdot (-8) \approx 1.316
 $$
+
 
 - **Need**: Prevents AdaGrad’s stalling, good for non-convex loss.
 
@@ -2344,10 +2365,12 @@ $$
 w = w - \frac{\eta \hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
 $$
 
-- **Example**:  
+- **Example**: 
+
 $$
 m_1 = 0.1 \cdot (-8) = -0.8,\quad v_1 = 0.001 \cdot 64 = 0.064
 $$  
+
 
 After bias correction, 
 
@@ -2990,6 +3013,7 @@ $$
 $$
 
 - **Example**:  
+
 $$
 \text{MAE} = \frac{2 + 1}{2} = 1.5
 $$
@@ -3095,6 +3119,7 @@ $$
 $$
 
 - **Example**:  
+
 $$
 \text{Dice} = \frac{2 \cdot 50}{2 \cdot 50 + 10 + 20} \approx 0.77
 $$
