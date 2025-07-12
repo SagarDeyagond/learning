@@ -1,3 +1,28 @@
+# Computer Vision Q&A
+
+## Table of Contents
+1. [Core Computer Vision Concepts](#core-computer-vision-concepts)
+2. [CNN Architecture and Design](#cnn-architecture-and-design)
+3. [Practical Applications and Experience](#practical-applications-and-experience)
+4. [Advanced Topics](#advanced-topics)
+5. [Overfitting & Underfitting](#overfitting-underfitting)
+6. [Technical Explanation](#technical-explanation)
+7. [Weighted Methods for Imbalanced Data](#weighted-methods-for-imbalanced-data)
+8. [Class Weights](#class-weights)
+9. [Feedforward & Backpropagation](#feedforward-backpropagation)
+10. [Loss & Cost Functions](#loss-cost-functions)
+11. [Cross-Entropy vs. Binary Cross-Entropy](#cross-entropy-vs-binary-cross-entropy)
+12. [Train, Validation, and Test Data](#train-validation-and-test-data)
+13. [Vanishing Gradient Problem](#vanishing-gradient-problem)
+14. [Batch Normalization](#batch-normalization)
+15. [Gradient Descent & Optimizers](#gradient-descent-optimizers)
+16. [GD vs. SGD](#gd-vs-sgd)
+17. [Dropout](#dropout)
+18. [CNN Evaluation Metrics](#cnn-evaluation-metrics)
+19. [Skip Layers](#skip-layers)
+
+---
+
 ## Core Computer Vision Concepts
 
 **Q1: What is computer vision, and how does it relate to CNNs?**
@@ -11,6 +36,8 @@
 **Q3: What’s the purpose of pooling layers?**
 
 **Answer:** Pooling layers reduce spatial dimensions of feature maps, making the network computationally efficient and less prone to overfitting. Max pooling, for instance, keeps the most prominent features, which I’ve used in CNNs for real-time object detection to maintain key information while shrinking the data size. In one project, I experimented with average pooling for smoother feature aggregation, depending on the task’s need for granularity.
+
+---
 
 ## CNN Architecture and Design
 
@@ -26,6 +53,8 @@
 
 **Answer:** A 1x1 convolution applies a filter across channels at each spatial position, reducing or expanding the number of feature maps without altering spatial dimensions. It’s like a dimensionality reduction or feature fusion trick—I’ve used it in projects inspired by Inception models to cut computation costs while preserving information. Regular convolutions, like 3x3, capture spatial relationships across a larger receptive field, which I’ve paired with 1x1 convolutions for efficiency in deep networks.
 
+---
+
 ## Practical Applications and Experience
 
 ### Q7: Tell us about a computer vision project you’ve worked on using CNNs.
@@ -40,6 +69,8 @@
 
 **Answer:** For real-time needs, I focus on model efficiency: reducing parameters with techniques like depthwise separable convolutions (as in MobileNet), quantizing weights to lower precision, or pruning redundant filters post-training. In a traffic monitoring project, I distilled a large CNN into a smaller model, cutting inference time by 40% while retaining 95% accuracy, deployable on resource-constrained devices.
 
+---
+
 ## Advanced Topics
 
 ### Q10: What are skip connections, and why are they useful?
@@ -53,6 +84,10 @@
 ### Q12: What’s the role of attention mechanisms in modern CNNs?
 
 **Answer:** Attention mechanisms, like in Transformers or CBAM, focus the network on relevant image regions, enhancing performance in tasks like object detection. I’ve integrated channel and spatial attention into a CNN for aerial image analysis, boosting precision by emphasizing key features (e.g., buildings) over background noise. It’s a shift from uniform feature processing, aligning with my recent work on hybrid CNN-Transformer models.
+
+---
+
+## Overfitting & Underfitting
 
 ### What is Overfitting?
 
@@ -91,6 +126,8 @@ Think of fitting a curve to data points:
 - **Overfitting**: A wiggly curve that hits every single point perfectly but zigzags wildly—useless for new points.
 - **Underfitting**: A straight line that barely touches any points—not capturing the trend.
 - **Good Fit**: A smooth curve that follows the general pattern without chasing every outlier.
+
+---
 
 ## Technical Explanation
 
@@ -318,8 +355,8 @@ FL(p_t) = -\alpha (1 - p_t)^\gamma \log(p_t)
 $$
 
 where:
-- α is the class weight  
-- γ is the focusing parameter that adjusts the rate at which easy examples are down-weighted
+- ```α``` is the class weight  
+- ```γ``` is the focusing parameter that adjusts the rate at which easy examples are down-weighted
 
 
 - **Example:** In object detection, focal loss helped me prioritize rare objects like pedestrians over common background regions.
@@ -360,13 +397,13 @@ model.fit(X_train, y_train, epochs=10, sample_weight=sample_weights)
 **Code Example:**
 ```python
 def focal_loss(gamma=2.0, alpha=0.25):
-def focal_loss_fn(y_true, y_pred):
-y_true = tf.cast(y_true, tf.float32)
-ce_loss = tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred)
-p_t = tf.reduce_sum(y_true * y_pred, axis=-1)
-focal_weight = alpha * tf.pow(1 - p_t, gamma)
-return focal_weight * ce_loss
-return focal_loss_fn
+  def focal_loss_fn(y_true, y_pred):
+    y_true = tf.cast(y_true, tf.float32)
+    ce_loss = tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred)
+    p_t = tf.reduce_sum(y_true * y_pred, axis=-1)
+    focal_weight = alpha * tf.pow(1 - p_t, gamma)
+    return focal_weight * ce_loss
+  return focal_loss_fn
 model.compile(optimizer='adam', loss=focal_loss(gamma=2.0, alpha=0.75))
 model.fit(X_train, y_train, epochs=10)
 ```
@@ -490,13 +527,13 @@ $$ \text{weight}_c = \frac{\text{total samples}}{\text{samples in class } c} $$
   $$
   \text{Loss} = -\sum_{c=0}^{C-1} y_c \log(p_c)
   $$
-  where \( y_c \) is the true label (1 if correct class, 0 otherwise), and \( p_c \) is the predicted probability.
+  where \( $y_c$ \) is the true label (1 if correct class, 0 otherwise), and \( $p_c \) is the predicted probability.
 
 - **Weighted cross-entropy**:  
   $$
   \text{Weighted Loss} = -\sum_{c=0}^{C-1} w_c \, y_c \log(p_c)
   $$
-  where \( w_c \) is the class weight.
+  where \( $w_c$ \) is the class weight.
 
 ## 📐 Math in Action
 
@@ -639,7 +676,7 @@ Backpropagation (backward propagation of errors) is the process of calculating t
   $$
   w = w - \eta \cdot \frac{\partial L}{\partial w}
   $$
-  where \( \eta \) is the learning rate.
+  where \( $\eta$ \) is the learning rate.
 
 ### 🧪 Simple Example:
 
@@ -736,7 +773,7 @@ In my tumor detection work, feedforward scored tumor likelihood, and backprop re
   $$
   L = -\sum_{c=1}^{C} y_c \log(p_c)
   $$
-  where \( y_c = 1 \) if class \( c \) is true, \( p_c \) is the predicted probability, and \( C \) is the number of classes.
+  where \( $y_c = 1$ \) if class \( $c$ \) is true, \( $p_c$ \) is the predicted probability, and \( $C$ \) is the number of classes.
 
 - **Cost Function**:
   $$
@@ -750,7 +787,7 @@ In my tumor detection work, feedforward scored tumor likelihood, and backprop re
   L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357
   $$
 
-**Why Used**: Penalizes confident wrong predictions more (e.g., \(\log(0.1)\) is a larger penalty than \(\log(0.7)\)).
+**Why Used**: Penalizes confident wrong predictions more (e.g., $\log(0.1)$ is a larger penalty than $\log(0.7)$).
 
 ---
 
@@ -801,8 +838,8 @@ $$
 **Example**:
 - True Box: \([50, 50, 10, 10]\), Predicted: \([52, 51, 11, 9]\)
 - Coord Loss: \( 4 + 1 + 1 + 1 = 7 \)
-- Objectness: \( -\log(0.8) \approx 0.223 \)
-- Class: \( -\log(0.9) \approx 0.105 \)
+- Objectness: \( $-\log(0.8) \approx 0.223$ \)
+- Class: \( $-\log(0.9) \approx 0.105$ \)
 - Total Loss:  
   $$
   5 \cdot 7 + 0.223 + 0.105 = 35.328 \quad (\lambda_{\text{coord}} = 5)
@@ -883,7 +920,6 @@ These functions drive optimization and are tailored to each task’s needs.
 
 ## 🔍 Cross-Entropy vs. Binary Cross-Entropy
 
----
 
 ### 📘 Cross-Entropy (Categorical Cross-Entropy)
 
@@ -895,12 +931,12 @@ $$
 L = -\sum_{c=1}^{C} y_c \log(p_c)
 $$
 
-- \( C \): Number of classes (\( C > 2 \))
-- \( y_c \): True label (1 if class \( c \) is correct, 0 otherwise; one-hot encoded)
-- \( p_c \): Predicted probability for class \( c \)
+- \( $C$ \): Number of classes (\( $C > 2$ \))
+- \( $y_c$ \): True label (1 if class \( c \) is correct, 0 otherwise; one-hot encoded)
+- \( $p_c$ \): Predicted probability for class \( $c$ \)
 
 **Example**:
-- **Task**: Classify an image as "cat," "dog," or "bird" (\( C = 3 \))
+- **Task**: Classify an image as "cat," "dog," or "bird" (\( $C = 3$ \))
 - **True Label**: "Dog" → \([0, 1, 0]\)
 - **Predicted**: \([0.2, 0.7, 0.1]\)
 - **Loss**:  
@@ -923,8 +959,8 @@ $$
 L = -[y \log(p) + (1 - y) \log(1 - p)]
 $$
 
-- \( y \): True label (0 or 1)
-- \( p \): Predicted probability of class 1 (between 0 and 1)
+- \( $y$ \): True label (0 or 1)
+- \( $p$ \): Predicted probability of class 1 (between 0 and 1)
 
 **Example**:
 - **Task**: Classify an image as "cat" (0) or "dog" (1)
@@ -944,10 +980,10 @@ Used with **sigmoid** activation for binary classification.
 
 | Aspect              | Cross-Entropy                  | Binary Cross-Entropy                     |
 |---------------------|--------------------------------|------------------------------------------|
-| **Number of Classes** | Multiple (\( C > 2 \))         | Two (\( C = 2 \))                         |
+| **Number of Classes** | Multiple \( $C > 2$ \)        | Two \( $C = 2$ \)                         |
 | **Output Format**     | Probability distribution over \( C \) classes | Single probability for class 1         |
 | **Activation**        | Softmax                        | Sigmoid                                  |
-| **Formula**           | \( -\sum y_c \log(p_c) \)      | \( -[y \log(p) + (1 - y) \log(1 - p)] \) |
+| **Formula**           |  $-\sum y_c \log(p_c)$      | \( $-[y \log(p) + (1 - y) \log(1 - p)]$ \) |
 | **Use Case**          | Multi-class (e.g., cat/dog/bird) | Binary (e.g., cat/not cat)             |
 
 
@@ -955,9 +991,9 @@ Used with **sigmoid** activation for binary classification.
 
 ### 🔹 Binary as a Special Case of Cross-Entropy
 
-If \( C = 2 \) in cross-entropy (e.g., classes 0 and 1), with:
--  y = [y_0, y_1] 
-- p = [p_0, p_1] , where  p_0 = 1 - p_1 
+If \( $C = 2$ \) in cross-entropy (e.g., classes 0 and 1), with:
+-  $y = [y_0, y_1]$ 
+- $p = [p_0, p_1]$ , where  $p_0 = 1 - p_1$ 
 
 Then:
 
@@ -967,7 +1003,7 @@ Then:
   $$
 
 - For "dog" (class 1):  
-  \( y = [0, 1] \), \( p = [0.3, 0.7] \)  
+  \( $y = [0, 1]$ \), \( $p = [0.3, 0.7]$ \)  
   $$
   L = -\log(0.7)
   $$
@@ -977,8 +1013,8 @@ Then:
   L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7)
   $$
 
-✅ **Result**: Identical for \( C = 2 \), but binary cross-entropy simplifies notation.  
-❗ **Multi-Class Divergence**: For \( C > 2 \), cross-entropy sums over all classes, while binary cross-entropy does not extend beyond two.
+✅ **Result**: Identical for \( $C = 2$ \), but binary cross-entropy simplifies notation.  
+❗ **Multi-Class Divergence**: For \( $C > 2$ \), cross-entropy sums over all classes, while binary cross-entropy does not extend beyond two.
 
 ---
 
@@ -986,7 +1022,7 @@ Then:
 
 ### 📌 Cross-Entropy
 - **Project**: Classifying defects (e.g., "scratch," "dent," "none")
-- **Setup**: CNN with softmax output: \([0.1, 0.6, 0.3]\), true label: \([0, 1, 0]\)
+- **Setup**: CNN with softmax output: $([0.1, 0.6, 0.3])$, true label: $([0, 1, 0])$
 - **Loss**:  
   $$
   L = -\log(0.6) \approx 0.51
@@ -1019,8 +1055,8 @@ Then:
 ## 💬 Interview-Ready Answer
 
 **Q: What’s the difference between cross-entropy and binary cross-entropy?**  
-**A**: Cross-entropy is for **multi-class classification**, measuring error across \( C > 2 \) classes with a softmax output.  
-For example, predicting "cat," "dog," or "bird" with \([0.2, 0.7, 0.1]\) vs. \([0, 1, 0]\), the loss is:  
+**A**: Cross-entropy is for **multi-class classification**, measuring error across $( C > 2 )$ classes with a softmax output.  
+For example, predicting "cat," "dog," or "bird" with $([0.2, 0.7, 0.1])$ vs. $([0, 1, 0])$, the loss is:  
 $$
 -\log(0.7)
 $$
@@ -1076,7 +1112,7 @@ L = -\sum_{c} y_c \log(\hat{y}_c)
 $$
 
 **Example**:
-- y = [0, 1] , $\hat{y}$ = [0.3, 0.7] 
+- $y = [0, 1]$ , $\hat{y} = [0.3, 0.7]$
 - $L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357$
 
 This loss is the "error" we aim to minimize.
@@ -1149,7 +1185,7 @@ $$
   $$
   \frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1 - \hat{y})} = \frac{0.7 - 1}{0.7 \cdot 0.3} \approx -1.43
   $$
-- **Update**: Weights shift to increase \( \hat{y} \)
+- **Update**: Weights shift to increase $( \hat{y} )$
 
 ---
 
@@ -1163,7 +1199,7 @@ $$
   $$
   \frac{\partial L}{\partial \hat{y}} = 2(\hat{y} - y) = 2(12 - 10) = 4
   $$
-- **Update**: Weights decrease to pull \( \hat{y} \) toward 10
+- **Update**: Weights decrease to pull $( \hat{y} )$ toward 10
 
 ---
 
@@ -1271,7 +1307,7 @@ This propagates back to adjust convolutional filters or dense layer weights.
 
 **Example**:
 - Loss with \( $\eta = 0.01$ \): $0.5$  
-- Loss with \( $\eta = 0.001$ \): $0.3$ $→$ switch to smaller learning rate
+- Loss with \( $\eta = 0.001$ \): $0.3$ $\rightarrow$ switch to smaller learning rate
 
 ---
 
@@ -1513,8 +1549,8 @@ Imagine a 3-layer fully connected neural network classifying an image as "cat" o
 
 ### Forward Pass
 
-- Input: \( x = 1 \)
-- Weights: \( w_1 = w_2 = w_3 = 0.5 \), Biases = 0
+- Input: $( x = 1 )$
+- Weights: $( w_1 = w_2 = w_3 = 0.5 )$, Biases = 0
 - Activations: Sigmoid \( $\sigma(z)$ = $\frac{1}{1 + e^{-z}}$ \)
 
 ```math
@@ -1785,7 +1821,7 @@ Gradient Descent uses the gradient (partial derivative of the loss with respect 
 - **Update Weights**:
   - Rule:  
     $$ w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w} $$  
-    where \( \eta \) (learning rate) controls step size.
+    where *$\eta$*   (learning rate) controls step size.
   - Direction: Negative gradient points downhill (toward lower loss).
 
 - **Iterate**:
@@ -1981,7 +2017,8 @@ Where:
   $$  
   $$
   w = w - \eta \cdot v_t
-  $$
+  $$ 
+  where $\beta$ (e.g., 0.9) is momentum.
 - **Example**:  
   $$
   v_0 = 0,\quad \frac{\partial L}{\partial w} = -8
@@ -2145,9 +2182,9 @@ The key difference lies in how much data they use to compute these gradients and
   $$
 
   Where:
-  - \( N \): Total number of samples  
-  - \( L_i \): Loss for sample \( i \)  
-  - \( \eta \): Learning rate
+  - \( $N$ \): Total number of samples  
+  - \( $L_i$ \): Loss for sample \( i \)  
+  - \( $\eta$ \): Learning rate
 
 - **Frequency**: One update per epoch (full dataset pass)
 
@@ -2167,23 +2204,23 @@ The key difference lies in how much data they use to compute these gradients and
   $$
 
   Where:
-  - \( L_i \): Loss for the current sample \( i \)
+  - \( $L_i$ \): Loss for the current sample \( $i$ \)
 
-- **Frequency**: \( N \) updates per epoch (one per sample in pure SGD)
+- **Frequency**: \( $N$ \) updates per epoch (one per sample in pure SGD)
 
 
 ## 📊 Simple Example: Linear Regression
 
 Let’s use a toy problem to compare:
 
-- Predict: \( y = 4 \)
-- Model: \( \hat{y} = w \cdot x \)
-- Input: \( x = 2 \)
-- Initial weight: \( w = 1 \)
-- Learning rate: \( \eta = 0.1 \)
-- Loss function: \( L = (y - \hat{y})^2 \)
+- Predict: $( y = 4 )$
+- Model: $( \hat{y} = w \cdot x )$
+- Input: $( x = 2 )$
+- Initial weight: $( w = 1 )$
+- Learning rate: $( \eta = 0.1 )$
+- Loss function: $( L = (y - \hat{y})^2 )$
 - Dataset: 3 samples  
-  \( (x, y) = [(2, 4), (1, 2), (3, 6)] \)
+  $( (x, y) = [(2, 4), (1, 2), (3, 6)] )$
 
 ---
 
@@ -2276,7 +2313,7 @@ Let’s use a toy problem to compare:
 
 ### ⚡ Stochastic Gradient Descent (SGD)
 - **Use Case**: Large datasets, real-time systems, or with mini-batches (common in practice).
-- **Example**: Mini-batch SGD (batch size 32) on your defect CNN — loss drops from 2.0 to 0.5 in 5 epochs, with 312 updates per epoch \( \left(\frac{10,000}{32}\right) \).
+- **Example**: Mini-batch SGD (batch size 32) on your defect CNN — loss drops from 2.0 to 0.5 in 5 epochs, with 312 updates per epoch  $\left(\frac{10,000}{32}\right)$.
 - **Advantage**: Fast, leverages GPU parallelism — standard in your YOLO or segmentation models.
 
 ---
@@ -2311,8 +2348,7 @@ Let’s use a toy problem to compare:
 ## 🎯 Interview-Ready Answer
 
 **Q: What’s the difference between GD and SGD?**  
-**A:** Gradient Descent uses the entire dataset to compute an average gradient and update weights once per epoch, like moving  
-\\( w \\) from 1 to 1.933 with a precise -9.33 gradient for three samples.  
+**A:** Gradient Descent uses the entire dataset to compute an average gradient and update weights once per epoch, like moving $( w )$ from 1 to 1.933 with a precise -9.33 gradient for three samples.  
 Stochastic Gradient Descent updates weights per sample, like stepping from 1 to 1.8, 1.84, then 2.128 across the same samples — faster but noisier.  
 GD is accurate but slow, ideal for small datasets;  
 SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD (e.g., 32 samples) balances speed and stability, dropping loss from 2.0 to 0.5 in fewer epochs.
@@ -2338,27 +2374,27 @@ SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD
 
 ### 🧮 Class Weights
 - **How**: Adjust loss  
-  \\[
+  $[
   L = -w_c y_c \\log(p_c)
-  \\]  
+  ]$  
   Higher weights for rare classes (e.g., dog: 10 vs. cat: 1.11).
 - **Example**: Loss for dog misprediction dominates, improving recall.
 
 ### 🔁 Feedforward & Backpropagation
 - **Feedforward**: Input → layers → output (e.g., image to [0.7, 0.3]).
 - **Backpropagation**: Loss → gradients → weight updates  
-  (e.g., \\( w = w - 0.1 \\cdot (-0.3) \\)).
+  e.g., $ w = w - 0.1 \cdot (-0.3)$ .
 - **Need**: Predictions and learning.
 
 ### 📉 Loss & Cost Functions
-- **Classification**: Cross-entropy (e.g., \\( -\\log(0.7) = 0.357 \\)).
-- **Regression**: MSE (e.g., \\( (10 - 12)^2 = 4 \\)).
+- **Classification**: Cross-entropy (e.g., $( -\\log(0.7) = 0.357 )$).
+- **Regression**: MSE (e.g., $( (10 - 12)^2 = 4 )$).
 - **Object Detection**: Combined (e.g., box MSE + class CE).
 - **Segmentation**: Pixel-wise CE or Dice (e.g., overlap-based).
 
 ### 🔍 Cross-Entropy vs. Binary Cross-Entropy
-- **Cross-Entropy**: Multi-class (e.g., cat/dog/bird, \\( -\\log(0.7) \\)).
-- **Binary Cross-Entropy**: Two-class (e.g., dog/not dog, \\( -[1 \\log(0.7)] \\)).
+- **Cross-Entropy**: Multi-class e.g., cat/dog/bird, $( -\\log(0.7) )$.
+- **Binary Cross-Entropy**: Two-class e.g., dog/not dog, $( -[1 \\log(0.7)] )$.
 
 ### 🔄 Loss in Backpropagation
 - **Use**: Ground truth vs. prediction → loss (e.g., 0.357) → gradients (e.g., [0.3, -0.3]) → updates.
@@ -2379,7 +2415,7 @@ SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD
 - **Need**: Stabilizes training, speeds convergence (e.g., 20 to 10 epochs).
 
 ### 🧮 Gradient Descent (GD)
-- **How**: Full dataset gradient (e.g., -9.33), one update/epoch (e.g., \\( w = 1.933 \\)).
+- **How**: Full dataset gradient (e.g., -9.33), one update/epoch (e.g., $( w = 1.933 )$).
 - **Need**: Precise but slow optimization.
 
 ### ⚙️ Optimizers
@@ -2411,7 +2447,7 @@ Dropout is a regularization technique that randomly "drops" (sets to zero) a sub
 Introduced by Srivastava et al. in 2014, it’s like temporarily disabling parts of the network to prevent over-reliance on specific features or paths.
 
 - **How It Works**:  
-  During training, each neuron is kept with probability \( p \) (e.g., 0.5) and dropped with probability \( 1 - p \).  
+  During training, each neuron is kept with probability $( p )$ (e.g., 0.5) and dropped with probability $( 1 - p )$.  
   Dropped neurons don’t contribute to forward or backward passes in that iteration.
 
 - **Key Parameter**:  
@@ -2441,8 +2477,8 @@ Dropout is applied only during training and has several key benefits:
 ### 🌐 Improves Generalization
 - **Why**: By simulating multiple network architectures, dropout reduces memorization of training data quirks.
 - **Math Intuition**:  
-  If \( p = 0.5 \), each iteration trains a different sub-network.  
-  For \( n \) neurons, there are approximately \( 2^n \) possible combinations — approximating an ensemble.
+  If $( p = 0.5 )$, each iteration trains a different sub-network.  
+  For $( n )$ neurons, there are approximately $( 2^n )$ possible combinations — approximating an ensemble.
 
 ---
 
@@ -2450,7 +2486,7 @@ Dropout is applied only during training and has several key benefits:
 
 - **Forward Pass**:  
   Randomly mask neurons  
-  e.g., \([1.2, 0.5, -0.8] \rightarrow [1.2, 0, -0.8]\) if the second neuron drops.
+  e.g., $([1.2, 0.5, -0.8] \rightarrow [1.2, 0, -0.8])$ if the second neuron drops.
 
 - **Loss**:  
   Computed on remaining activations.
@@ -2471,13 +2507,13 @@ During inference (testing or deployment), dropout is turned off, and the full ne
 - **Why**: We want the best possible predictions, not random sub-networks.
 
 ### ⚖️ Weight Scaling
-- **Why**: During training, only a fraction \( p \) of neurons contribute (e.g., 50% with \( p = 0.5 \)).  
+- **Why**: During training, only a fraction $( p )$ of neurons contribute e.g., 50% with $( p = 0.5 )$.  
   At inference, all neurons are active, so outputs would be larger unless adjusted.
-- **How**: Weights are scaled by \( p \)  
+- **How**: Weights are scaled by $( p )$  
   (e.g., multiplied by 0.5 if dropout rate was 0.5).  
   This mimics the expected output from training’s averaged sub-networks.
 - **Alternative (Inverted Dropout)**:  
-  Scale activations by \( \frac{1}{p} \) during training, so no scaling is needed at inference — common in frameworks like TensorFlow and PyTorch.
+  Scale activations by $( \frac{1}{p} )$ during training, so no scaling is needed at inference — common in frameworks like TensorFlow and PyTorch.
 
 ---
 
@@ -2485,12 +2521,12 @@ During inference (testing or deployment), dropout is turned off, and the full ne
 
 - **Training**:  
   Dense layer with dropout 0.5, weights  
-  \( w = [1, 2, 3] \), random mask  
-  \( [1, 0, 1] \rightarrow \text{output uses } [1, 0, 3] \)
+  $( w = [1, 2, 3] )$, random mask  
+  $( [1, 0, 1] \rightarrow \text{output uses } [1, 0, 3] )$
 
 - **Inference**:  
   Full weights  
-  \( [1, 2, 3] \cdot 0.5 = [0.5, 1, 1.5] \),  
+  $( [1, 2, 3] \cdot 0.5 = [0.5, 1, 1.5] )$,  
   all neurons active, scaled output matches training expectation.
 
 ---
@@ -2511,7 +2547,7 @@ During inference (testing or deployment), dropout is turned off, and the full ne
   - Test accuracy rises to 85% — better generalization to unseen defects
 
 - **Inference**:  
-  Full network used, weights scaled (e.g., \( w \cdot 0.5 \)),  
+  Full network used, weights scaled (e.g., $( w \cdot 0.5 )$),  
   predicts reliably on new X-rays
 
 
@@ -2796,8 +2832,11 @@ With skip layers, the flow includes shortcuts:
 - **Backward Pass (Backpropagation)**:
   - Gradients flow through both the skip path and the main path.
   - Gradient of loss w.r.t. ( x ):  
+  $$
     \frac{\partial L}{\partial x} = \frac{\partial L}{\partial y} \cdot (1 + \frac{\partial F(x)}{\partial x}).
-  - The “1” from the skip path ensures gradients don’t vanish, even if \frac{\partial F(x)}{\partial x} is small.
+    $$
+  - The “1” from the skip path ensures gradients don’t vanish, even if $
+  \frac{\partial F(x)}{\partial x}$ is small.
 
 **Dimension Matching**:
 - If ( x ) and ( F(x) ) have different shapes (e.g., due to conv strides), ( x ) is adjusted (e.g., via 1x1 convolution or pooling) to match.
@@ -2814,7 +2853,7 @@ Imagine a 3-layer CNN classifying defects:
 
 - **With Skip**:
   - Input ( x ) → Conv1 → Conv2 → Add ( x ) → Dense → Output.
-  - F(x) = \text{Conv2}(\text{Conv1}(x)), y = F(x) + x.
+  - F(x) = $\text{Conv2}(\text{Conv1}(x)), y = F(x) + x$
   - Early edge features bypass Conv1/Conv2, directly aiding the output.
 
 **Numbers**:
@@ -2829,7 +2868,7 @@ Skip connections address key challenges in deep networks, making them invaluable
 
 - **Mitigate Vanishing Gradients**
   - **Problem**: In deep CNNs (e.g., 50 layers), gradients shrink (e.g., from -0.428 to -0.006), stalling early layer learning.
-  - **Solution**: Skip paths provide a direct gradient route (\frac{\partial L}{\partial x} \geq \frac{\partial L}{\partial y}), ensuring early layers update.
+  - **Solution**: Skip paths provide a direct gradient route $(\frac{\partial L}{\partial x} \geq \frac{\partial L}{\partial y})$, ensuring early layers update.
   - **Example**: In your 50-layer segmentation CNN, skip layers keep edge detectors active, dropping loss from 0.8 to 0.3.
 
 - **Enable Deeper Networks**
@@ -2916,9 +2955,9 @@ as seen in **ResNet**. These connections help:
 
 - **Mitigate vanishing gradients**:  
   They ensure gradients flow back effectively, e.g.,  
-  \[
+  $
   \frac{\partial L}{\partial x} \geq 1
-  \]  
+  $  
   In my segmentation work, skip layers in **U-Net** preserved edge features, reducing loss from **0.8 to 0.3** and boosting Dice score from **0.60 to 0.77**.
 
 - **Enable deeper CNNs**:  
