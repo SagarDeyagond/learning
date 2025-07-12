@@ -561,7 +561,7 @@ $$
 \text{Loss} = -\sum_{c=0}^{C-1} y_c \log(p_c)
 $$
 
-where \( $y_c$ \) is the true label (1 if correct class, 0 otherwise), and \( $p_c \) is the predicted probability.
+where \( $y_c$ \) is the true label (1 if correct class, 0 otherwise), and \( $p_c$ \) is the predicted probability.
 
 - **Weighted cross-entropy**:  
 
@@ -858,7 +858,7 @@ L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357
 $$
 
 
-**Why Used**: Penalizes confident wrong predictions more (e.g., $\log(0.1)$ is a larger penalty than $\log(0.7)$).
+**Why Used**: Penalizes confident wrong predictions more e.g., $\log(0.1)$ is a larger penalty than $\log(0.7)$.
 
 ---
 
@@ -1286,10 +1286,11 @@ $$
 
 **Example**:
 
-- $w = 0.5$, $ a = 1$, $ \frac{\partial L}{\partial w} = -0.3$, $ \eta = 0.1$  
-- $ w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.5 + 0.03 = 0.53$
+- $w = 0.5$, $ a = 1$, $\frac{\partial L}{\partial w} = -0.3$, $\eta = 0.1$  
 
-**Effect**: Weight increases slightly, nudging $ \hat{y}_2$ closer to 1 (the correct class).
+- $w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.5 + 0.03 = 0.53$
+
+**Effect**: Weight increases slightly, nudging $\hat{y}_2$ closer to 1 (the correct class).
 
 ## 🔗 Tying Ground Truth and Prediction to Loss and Updates
 
@@ -2055,7 +2056,7 @@ $$
 w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
 $$  
 
-where *$\eta$*   (learning rate) controls step size.
+where $\eta$  (learning rate) controls step size.
 - Direction: Negative gradient points downhill (toward lower loss).
 
 - **Iterate**:
@@ -2698,8 +2699,8 @@ SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD
 - **Need**: Predictions and learning.
 
 ### 📉 Loss & Cost Functions
-- **Classification**: Cross-entropy (e.g., $(-\\log(0.7) = 0.357 )$).
-- **Regression**: MSE (e.g., $((10 - 12)^2 = 4 )$).
+- **Classification**: Cross-entropy e.g., $(-\\log(0.7) = 0.357)$.
+- **Regression**: MSE e.g., $((10 - 12)^2 = 4 )$.
 - **Object Detection**: Combined (e.g., box MSE + class CE).
 - **Segmentation**: Pixel-wise CE or Dice (e.g., overlap-based).
 
@@ -2726,7 +2727,7 @@ SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD
 - **Need**: Stabilizes training, speeds convergence (e.g., 20 to 10 epochs).
 
 ### 🧮 Gradient Descent (GD)
-- **How**: Full dataset gradient (e.g., -9.33), one update/epoch (e.g., $( w = 1.933 )$).
+- **How**: Full dataset gradient (e.g., -9.33), one update/epoch e.g., $(w = 1.933)$.
 - **Need**: Precise but slow optimization.
 
 ### ⚙️ Optimizers
@@ -2858,7 +2859,7 @@ all neurons active, scaled output matches training expectation.
 - Test accuracy rises to 85% — better generalization to unseen defects
 
 - **Inference**:  
-Full network used, weights scaled (e.g., $( w \cdot 0.5 )$),  
+Full network used, weights scaled e.g., $( w \cdot 0.5 )$,  
 predicts reliably on new X-rays
 
 
@@ -3195,10 +3196,9 @@ With skip layers, the flow includes shortcuts:
 
 $$
   \frac{\partial L}{\partial x} = \frac{\partial L}{\partial y} \cdot (1 + \frac{\partial F(x)}{\partial x}).
-  $$
+$$
 
-- The “1” from the skip path ensures gradients don’t vanish, even if $
-\frac{\partial F(x)}{\partial x}$ is small.
+- The “1” from the skip path ensures gradients don’t vanish, even if $\frac{\partial F(x)}{\partial x}$ is small.
 
 **Dimension Matching**:
 - If ( x ) and ( F(x) ) have different shapes (e.g., due to conv strides), ( x ) is adjusted (e.g., via 1x1 convolution or pooling) to match.
@@ -3317,9 +3317,7 @@ as seen in **ResNet**. These connections help:
 
 - **Mitigate vanishing gradients**:  
 They ensure gradients flow back effectively, e.g.,  
-$
-\frac{\partial L}{\partial x} \geq 1
-$  
+$\frac{\partial L}{\partial x} \geq 1$  
 In my segmentation work, skip layers in **U-Net** preserved edge features, reducing loss from **0.8 to 0.3** and boosting Dice score from **0.60 to 0.77**.
 
 - **Enable deeper CNNs**:  
@@ -3469,7 +3467,7 @@ Skip layers are most effective when:
 ### 📉 Underfitting
 - **Effect**: Skip layers **directly** reduce underfitting.
 - **How They Help**:
-- Improve gradient flow (e.g., $(\frac{\partial L}{\partial x} \geq 1)$)
+- Improve gradient flow e.g., $(\frac{\partial L}{\partial x} \geq 1)$
 - Enable deeper, more expressive models
 - Preserve early-layer information (e.g., edges)
 
