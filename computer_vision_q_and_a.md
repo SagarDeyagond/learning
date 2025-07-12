@@ -1286,7 +1286,7 @@ $$
 
 **Example**:
 
-- $w = 0.5$, $ a = 1$, $\frac{\partial L}{\partial w} = -0.3$, $\eta = 0.1$  
+- $w = 0.5$, $a = 1$, $\frac{\partial L}{\partial w} = -0.3$, $\eta = 0.1$  
 
 - $w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.5 + 0.03 = 0.53$
 
@@ -2331,7 +2331,9 @@ $$
 E[G^2]_t = \rho\, E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
 $$
 
-
+```text
+E[G^2]_t = ρ * E[G^2]_{t-1} + (1 - ρ) * (∂L/∂w)^2
+```
 
 
 $$
@@ -2658,7 +2660,7 @@ $$
 ## 🎯 Interview-Ready Answer
 
 **Q: What’s the difference between GD and SGD?**  
-**A:** Gradient Descent uses the entire dataset to compute an average gradient and update weights once per epoch, like moving $(w)$ from 1 to 1.933 with a precise -9.33 gradient for three samples.  
+**A:** Gradient Descent uses the entire dataset to compute an average gradient and update weights once per epoch, like moving $w$ from 1 to 1.933 with a precise -9.33 gradient for three samples.  
 Stochastic Gradient Descent updates weights per sample, like stepping from 1 to 1.8, 1.84, then 2.128 across the same samples — faster but noisier.  
 GD is accurate but slow, ideal for small datasets;  
 SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD (e.g., 32 samples) balances speed and stability, dropping loss from 2.0 to 0.5 in fewer epochs.
