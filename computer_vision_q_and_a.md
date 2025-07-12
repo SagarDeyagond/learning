@@ -231,8 +231,8 @@ The goal is the "Goldilocks zone"—a model that’s just right:
 ### Technical Detection
 
 - **Validation Set:** Split data into training, validation, and test sets. Monitor loss:
-  - **Overfitting:** Validation loss rises while training loss drops.
-  - **Underfitting:** Both training and validation loss remain high.
+- **Overfitting:** Validation loss rises while training loss drops.
+- **Underfitting:** Both training and validation loss remain high.
 - **Learning Curves:** Plot training vs. validation accuracy over epochs to spot these trends.
 
 ### Ways to Overcome Overfitting
@@ -397,13 +397,13 @@ model.fit(X_train, y_train, epochs=10, sample_weight=sample_weights)
 **Code Example:**
 ```python
 def focal_loss(gamma=2.0, alpha=0.25):
-  def focal_loss_fn(y_true, y_pred):
-    y_true = tf.cast(y_true, tf.float32)
-    ce_loss = tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred)
-    p_t = tf.reduce_sum(y_true * y_pred, axis=-1)
-    focal_weight = alpha * tf.pow(1 - p_t, gamma)
-    return focal_weight * ce_loss
-  return focal_loss_fn
+def focal_loss_fn(y_true, y_pred):
+  y_true = tf.cast(y_true, tf.float32)
+  ce_loss = tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred)
+  p_t = tf.reduce_sum(y_true * y_pred, axis=-1)
+  focal_weight = alpha * tf.pow(1 - p_t, gamma)
+  return focal_weight * ce_loss
+return focal_loss_fn
 model.compile(optimizer='adam', loss=focal_loss(gamma=2.0, alpha=0.75))
 model.fit(X_train, y_train, epochs=10)
 ```
@@ -459,15 +459,15 @@ weighted_loss = (loss * sample_weights).mean()  # Apply weights and average
 **Code Example:**
 ```python
 def focal_loss(outputs, targets, alpha=0.25, gamma=2.0):
-    ce_loss = nn.functional.cross_entropy(outputs, targets, reduction='none')
-    p_t = torch.exp(-ce_loss)
-    focal_loss = alpha * (1 - p_t) ** gamma * ce_loss
-    return focal_loss.mean()
+  ce_loss = nn.functional.cross_entropy(outputs, targets, reduction='none')
+  p_t = torch.exp(-ce_loss)
+  focal_loss = alpha * (1 - p_t) ** gamma * ce_loss
+  return focal_loss.mean()
 
 for inputs, labels in dataloader:
-    outputs = model(inputs)
-    loss = focal_loss(outputs, labels, alpha=0.75, gamma=2.0)
-    loss.backward()
+  outputs = model(inputs)
+  loss = focal_loss(outputs, labels, alpha=0.75, gamma=2.0)
+  loss.backward()
 ```
 ---
 ## Practical Tips from Experience
@@ -506,15 +506,15 @@ Class weights are typically calculated as the inverse of class frequency (or a n
 
 - Cat (class 0): 900 samples 
 
-  $$ 
-  \text{frequency} = \frac{900}{1000} = 0.9 
-  $$
+$$ 
+\text{frequency} = \frac{900}{1000} = 0.9 
+$$
 
 - Dog (class 1): 100 samples  
 
-  $$ 
-  \text{frequency} = \frac{100}{1000} = 0.1 
-  $$
+$$ 
+\text{frequency} = \frac{100}{1000} = 0.1 
+$$
 
 
 ### 🧮 Compute Class Weights
@@ -528,15 +528,15 @@ $$
 
 - Cat (class 0): 
 
-  $$ 
-  \text{weight}_0 = \frac{1000}{900} \approx 1.11 
-  $$
+$$ 
+\text{weight}_0 = \frac{1000}{900} \approx 1.11 
+$$
 
 - Dog (class 1):  
 
-  $$ 
-  \text{weight}_1 = \frac{1000}{100} = 10 
-  $$
+$$ 
+\text{weight}_1 = \frac{1000}{100} = 10 
+$$
 
 
 **Interpretation**: Misclassifying a dog costs 10× more than misclassifying a cat.
@@ -545,19 +545,19 @@ $$
 
 - **Standard cross-entropy loss** for a single sample: 
 
-  $$
-  \text{Loss} = -\sum_{c=0}^{C-1} y_c \log(p_c)
-  $$
+$$
+\text{Loss} = -\sum_{c=0}^{C-1} y_c \log(p_c)
+$$
 
-  where \( $y_c$ \) is the true label (1 if correct class, 0 otherwise), and \( $p_c \) is the predicted probability.
+where \( $y_c$ \) is the true label (1 if correct class, 0 otherwise), and \( $p_c \) is the predicted probability.
 
 - **Weighted cross-entropy**:  
 
-  $$
-  \text{Weighted Loss} = -\sum_{c=0}^{C-1} w_c \, y_c \log(p_c)
-  $$
+$$
+\text{Weighted Loss} = -\sum_{c=0}^{C-1} w_c \, y_c \log(p_c)
+$$
 
-  where \( $w_c$ \) is the class weight.
+where \( $w_c$ \) is the class weight.
 
 ## 📐 Math in Action
 
@@ -567,23 +567,23 @@ Let’s compute the loss for two samples—one cat, one dog—with and without w
 
 - **Sample 1**: True = Cat (0), Predicted = [0.9, 0.1] 
 
-  $$
-  \text{Loss} = -[1 \cdot \log(0.9) + 0 \cdot \log(0.1)] = -\log(0.9) \approx 0.105
-  $$
+$$
+\text{Loss} = -[1 \cdot \log(0.9) + 0 \cdot \log(0.1)] = -\log(0.9) \approx 0.105
+$$
 
 
 - **Sample 2**: True = Dog (1), Predicted = [0.8, 0.2]  
 
-  $$
-  \text{Loss} = -[0 \cdot \log(0.8) + 1 \cdot \log(0.2)] = -\log(0.2) \approx 1.609
-  $$
+$$
+\text{Loss} = -[0 \cdot \log(0.8) + 1 \cdot \log(0.2)] = -\log(0.2) \approx 1.609
+$$
 
 
 - **Average Loss**:  
 
-  $$
-  \frac{0.105 + 1.609}{2} = 0.857
-  $$
+$$
+\frac{0.105 + 1.609}{2} = 0.857
+$$
 
 
 **Observation**: The dog error contributes more, but with 900 cats vs. 100 dogs, the total loss is dominated by cat predictions.
@@ -594,23 +594,23 @@ Let’s compute the loss for two samples—one cat, one dog—with and without w
 
 - **Sample 1**: True = Cat (0), Predicted = [0.9, 0.1]
 
-  $$
-  \text{Weighted Loss} = -[1.11 \cdot 1 \cdot \log(0.9) + 0 \cdot 10 \cdot \log(0.1)] = 1.11 \cdot 0.105 \approx 0.117
-  $$
+$$
+\text{Weighted Loss} = -[1.11 \cdot 1 \cdot \log(0.9) + 0 \cdot 10 \cdot \log(0.1)] = 1.11 \cdot 0.105 \approx 0.117
+$$
 
 
 - **Sample 2**: True = Dog (1), Predicted = [0.8, 0.2]  
 
-  $$
-  \text{Weighted Loss} = -[1.11 \cdot 0 \cdot \log(0.8) + 10 \cdot 1 \cdot \log(0.2)] = 10 \cdot 1.609 \approx 16.09
-  $$
+$$
+\text{Weighted Loss} = -[1.11 \cdot 0 \cdot \log(0.8) + 10 \cdot 1 \cdot \log(0.2)] = 10 \cdot 1.609 \approx 16.09
+$$
 
 
 - **Average Loss**:  
 
-  $$
-  \frac{0.117 + 16.09}{2} = 8.103
-  $$
+$$
+\frac{0.117 + 16.09}{2} = 8.103
+$$
 
 
 **Observation**: The dog error now dominates the loss (16.09 vs. 0.117), pushing the model to improve dog predictions.
@@ -684,17 +684,17 @@ Feedforward is the process of passing input data through a neural network, layer
 
 - **Task**: Classify a 32×32 image as "cat" or "dog".
 - **Flow**:  
-  Pixel values → Conv layer (filters detect edges) → ReLU → Pooling → Dense layer →  
-  Output: \([0.7, 0.3]\) → 70% cat, 30% dog
+Pixel values → Conv layer (filters detect edges) → ReLU → Pooling → Dense layer →  
+Output: \([0.7, 0.3]\) → 70% cat, 30% dog
 
 - **Math**:  
 
-  $$
-  z = w \cdot x + b, \quad a = \text{ReLU}(z)
-  $$
+$$
+z = w \cdot x + b, \quad a = \text{ReLU}(z)
+$$
 
 
-  where \( w \) is weight, \( x \) is input, and \( b \) is bias.
+where \( w \) is weight, \( x \) is input, and \( b \) is bias.
 
 ### ✅ Need for Feedforward:
 
@@ -713,35 +713,35 @@ Backpropagation (backward propagation of errors) is the process of calculating t
 - **Gradient Calculation**: Use the chain rule to compute how much each weight contributed to the error, starting from the output layer and moving back to the input.
 - **Weight Update**: Adjust weights using an optimizer (e.g., gradient descent):  
 
-  $$
-  w = w - \eta \cdot \frac{\partial L}{\partial w}
-  $$
+$$
+w = w - \eta \cdot \frac{\partial L}{\partial w}
+$$
 
-  where \( $\eta$ \) is the learning rate.
+where \( $\eta$ \) is the learning rate.
 
 ### 🧪 Simple Example:
 
 - **Feedforward Output**: \([0.7, 0.3]\), True Label: \([1, 0]\) (cat)
 - **Loss**: 
 
-  $$
-  L = -\sum y_i \log(p_i) = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] \approx 0.357
-  $$
+$$
+L = -\sum y_i \log(p_i) = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] \approx 0.357
+$$
 
 
 - **Backpropagation**:
-  - Output layer gradient:  
+- Output layer gradient:  
 
-    $$
-    \frac{\partial L}{\partial p} = p - y = [0.7 - 1, 0.3 - 0] = [-0.3, 0.3]
-    $$
+  $$
+  \frac{\partial L}{\partial p} = p - y = [0.7 - 1, 0.3 - 0] = [-0.3, 0.3]
+  $$
 
-  - Propagate back: Adjust dense layer weights, then pooling, then conv filters using the chain rule.
-  - Update:  
+- Propagate back: Adjust dense layer weights, then pooling, then conv filters using the chain rule.
+- Update:  
 
-    $$
-    w_{\text{new}} = w_{\text{old}} - 0.01 \cdot \text{gradient} \quad (\text{assuming } \eta = 0.01)
-    $$
+  $$
+  w_{\text{new}} = w_{\text{old}} - 0.01 \cdot \text{gradient} \quad (\text{assuming } \eta = 0.01)
+  $$
 
 
 ### ✅ Need for Backpropagation:
@@ -768,33 +768,33 @@ Without this cycle, your CNN wouldn’t adapt to the dataset.
 
 - **Feedforward**: 
 
-  $$
-  y = f(W_2 \cdot f(W_1 \cdot x + b_1) + b_2)
-  $$
+$$
+y = f(W_2 \cdot f(W_1 \cdot x + b_1) + b_2)
+$$
 
-  where \( f \) is an activation function (e.g., ReLU)
+where \( f \) is an activation function (e.g., ReLU)
 
 - **Loss**:  
 
-  $$
-  L = \text{loss}(y, y_{\text{true}})
-  $$
+$$
+L = \text{loss}(y, y_{\text{true}})
+$$
 
 
 - **Backpropagation**:
 
-  $$
-  \frac{\partial L}{\partial W_1} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W_1}
-  $$  
+$$
+\frac{\partial L}{\partial W_1} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W_1}
+$$  
 
-  (computed layer by layer using the chain rule)
+(computed layer by layer using the chain rule)
 
 ---
 
 ## 🔄 Gradient Flow in CNNs
 
 - Gradients flow **backward** from:
-  **Output → Dense → Pooling → Convolutional layers**
+**Output → Dense → Pooling → Convolutional layers**
 - Each layer scales gradients by weights and activation derivatives (e.g., ReLU derivatives are 1 or 0)
 
 ---
@@ -824,26 +824,26 @@ In my tumor detection work, feedforward scored tumor likelihood, and backprop re
 
 - **Formula (Single Sample)**:
 
-  $$
-  L = -\sum_{c=1}^{C} y_c \log(p_c)
-  $$
+$$
+L = -\sum_{c=1}^{C} y_c \log(p_c)
+$$
 
-  where \( $y_c = 1$ \) if class \( $c$ \) is true, \( $p_c$ \) is the predicted probability, and \( $C$ \) is the number of classes.
+where \( $y_c = 1$ \) if class \( $c$ \) is true, \( $p_c$ \) is the predicted probability, and \( $C$ \) is the number of classes.
 
 - **Cost Function**:
 
-  $$
-  J = \frac{1}{N} \sum_{i=1}^{N} L_i
-  $$
+$$
+J = \frac{1}{N} \sum_{i=1}^{N} L_i
+$$
 
 
 **Example**:
 - True Label: "Dog" → one-hot: \([0, 1]\), Prediction: \([0.3, 0.7]\)
 - Loss:  
 
-  $$
-  L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357
-  $$
+$$
+L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357
+$$
 
 
 **Why Used**: Penalizes confident wrong predictions more (e.g., $\log(0.1)$ is a larger penalty than $\log(0.7)$).
@@ -857,25 +857,25 @@ In my tumor detection work, feedforward scored tumor likelihood, and backprop re
 
 - **Formula (Single Sample)**:
 
-  $$
-  L = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
-  $$
+$$
+L = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+$$
 
 
 - **Cost Function**:
 
-  $$
-  J = \frac{1}{N} \sum_{i=1}^{N} L_i
-  $$
+$$
+J = \frac{1}{N} \sum_{i=1}^{N} L_i
+$$
 
 
 **Example**:
 - True: \([10, 20]\), Predicted: \([12, 19]\)
 - Loss:  
 
-  $$
-  L = \frac{1}{2} [(10 - 12)^2 + (20 - 19)^2] = \frac{1}{2} [4 + 1] = 2.5
-  $$
+$$
+L = \frac{1}{2} [(10 - 12)^2 + (20 - 19)^2] = \frac{1}{2} [4 + 1] = 2.5
+$$
 
 
 **Alternative**: Mean Absolute Error (MAE):  
@@ -893,15 +893,15 @@ $$
 **Common Loss**: Combined (e.g., YOLO Loss)
 
 - **Components**:
-  - Localization Loss (MSE or IoU)
-  - Confidence Loss (Binary Cross-Entropy)
-  - Classification Loss (Cross-Entropy)
+- Localization Loss (MSE or IoU)
+- Confidence Loss (Binary Cross-Entropy)
+- Classification Loss (Cross-Entropy)
 
 - **Simplified YOLO Formula**:
 
-  $$
-  L = \lambda_{\text{coord}} \sum (x_i - \hat{x}_i)^2 + \sum \text{BCE}(obj_i, \hat{obj}_i) + \sum \text{CE}(c_i, \hat{c}_i)
-  $$
+$$
+L = \lambda_{\text{coord}} \sum (x_i - \hat{x}_i)^2 + \sum \text{BCE}(obj_i, \hat{obj}_i) + \sum \text{CE}(c_i, \hat{c}_i)
+$$
 
 
 **Example**:
@@ -911,9 +911,9 @@ $$
 - Class: \( $-\log(0.9) \approx 0.105$ \)
 - Total Loss:  
 
-  $$
-  5 \cdot 7 + 0.223 + 0.105 = 35.328 \quad (\lambda_{\text{coord}} = 5)
-  $$
+$$
+5 \cdot 7 + 0.223 + 0.105 = 35.328 \quad (\lambda_{\text{coord}} = 5)
+$$
 
 
 ---
@@ -925,16 +925,16 @@ $$
 
 - **Cross-Entropy (Per Pixel)**:
 
-  $$
-  L = -\frac{1}{H \cdot W} \sum_{h,w} \sum_{c} y_{h,w,c} \log(p_{h,w,c})
-  $$
+$$
+L = -\frac{1}{H \cdot W} \sum_{h,w} \sum_{c} y_{h,w,c} \log(p_{h,w,c})
+$$
 
 
 - **Dice Loss**:
 
-  $$
-  L = 1 - \frac{2 \cdot |y \cap \hat{y}|}{|y| + |\hat{y}|}
-  $$
+$$
+L = 1 - \frac{2 \cdot |y \cap \hat{y}|}{|y| + |\hat{y}|}
+$$
 
 
 **Example**:
@@ -942,9 +942,9 @@ $$
 - Image: 4×4 pixels, 4 tumor pixels (1), 12 background (0)
 - Dice Loss:
 
-  $$
-  1 - \frac{2 \cdot 4}{4 + 5} = 1 - \frac{8}{9} \approx 0.11
-  $$
+$$
+1 - \frac{2 \cdot 4}{4 + 5} = 1 - \frac{8}{9} \approx 0.11
+$$
 
 
 **Why Dice?** Better for imbalanced classes (e.g., small tumors).
@@ -968,35 +968,35 @@ $$
 **A**: A **loss function** measures error for one sample, while the **cost function** averages it over the dataset.
 
 - **Classification**: For example, in a cat vs. dog classifier, I use **cross-entropy**.  
-  If the prediction is \([0.7, 0.3]\) for "dog" \([0, 1]\), the loss is: 
+If the prediction is \([0.7, 0.3]\) for "dog" \([0, 1]\), the loss is: 
 
-  $$
-  -\log(0.7) \approx 0.357
-  $$
+$$
+-\log(0.7) \approx 0.357
+$$
 
 
 - **Regression**: For predicting bounding box coordinates, I use **Mean Squared Error (MSE)**.  
-  If the true value is \([10, 20]\) and the prediction is \([12, 19]\), the loss is: 
+If the true value is \([10, 20]\) and the prediction is \([12, 19]\), the loss is: 
 
-  $$
-  \frac{1}{2}[(10 - 12)^2 + (20 - 19)^2] = \frac{1}{2}[4 + 1] = 2.5
-  $$
+$$
+\frac{1}{2}[(10 - 12)^2 + (20 - 19)^2] = \frac{1}{2}[4 + 1] = 2.5
+$$
 
 
 - **Object Detection**: In **YOLO**, the loss combines:
-  - MSE for box coordinates
-  - Binary cross-entropy for objectness
-  - Cross-entropy for class probabilities  
-  This balances localization and classification.
+- MSE for box coordinates
+- Binary cross-entropy for objectness
+- Cross-entropy for class probabilities  
+This balances localization and classification.
 
 - **Segmentation**: For pixel-wise classification (e.g., tumor detection), I use:
-  - **Cross-entropy** for general cases
-  - **Dice loss** for imbalanced masks  
-  Dice loss measures overlap:
+- **Cross-entropy** for general cases
+- **Dice loss** for imbalanced masks  
+Dice loss measures overlap:
 
-  $$
-  L = 1 - \frac{2 \cdot |y \cap \hat{y}|}{|y| + |\hat{y}|}
-  $$
+$$
+L = 1 - \frac{2 \cdot |y \cap \hat{y}|}{|y| + |\hat{y}|}
+$$
 
 
 These functions drive optimization and are tailored to each task’s needs.
@@ -1026,9 +1026,9 @@ $$
 - **True Label**: "Dog" → \([0, 1, 0]\)
 - **Predicted**: \([0.2, 0.7, 0.1]\)
 - **Loss**:  
-  $$
-  L = -[0 \cdot \log(0.2) + 1 \cdot \log(0.7) + 0 \cdot \log(0.1)] = -\log(0.7) \approx 0.357
-  $$
+$$
+L = -[0 \cdot \log(0.2) + 1 \cdot \log(0.7) + 0 \cdot \log(0.1)] = -\log(0.7) \approx 0.357
+$$
 
 **Key Point**:  
 Used with **softmax** activation for multi-class problems.
@@ -1056,9 +1056,9 @@ $$
 - **Predicted**: 0.7
 - **Loss**:  
 
-  $$
-  L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7) \approx 0.357
-  $$
+$$
+L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7) \approx 0.357
+$$
 
 
 **Key Point**:  
@@ -1089,24 +1089,24 @@ Then:
 
 - **Cross-Entropy**:
 
-  $$
-  L = -[y_0 \log(p_0) + y_1 \log(p_1)]
-  $$
+$$
+L = -[y_0 \log(p_0) + y_1 \log(p_1)]
+$$
 
 
 - For "dog" (class 1):  
-  \( $y = [0, 1]$ \), \( $p = [0.3, 0.7]$ \) 
+\( $y = [0, 1]$ \), \( $p = [0.3, 0.7]$ \) 
 
-  $$
-  L = -\log(0.7)
-  $$
+$$
+L = -\log(0.7)
+$$
 
 
 - **Binary Cross-Entropy**:
 
-  $$
-  L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7)
-  $$
+$$
+L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7)
+$$
 
 
 ✅ **Result**: Identical for \( $C = 2$ \), but binary cross-entropy simplifies notation.  
@@ -1121,9 +1121,9 @@ Then:
 - **Setup**: CNN with softmax output: $([0.1, 0.6, 0.3])$, true label: $([0, 1, 0])$
 - **Loss**:  
 
-  $$
-  L = -\log(0.6) \approx 0.51
-  $$
+$$
+L = -\log(0.6) \approx 0.51
+$$
 
 - **Use**: Multi-class defect identification
 
@@ -1132,9 +1132,9 @@ Then:
 - **Setup**: CNN with sigmoid output: 0.8, true label: 1
 - **Loss**: 
 
-  $$
-  L = -\log(0.8) \approx 0.223
-  $$
+$$
+L = -\log(0.8) \approx 0.223
+$$
 
 - **Use**: Binary decisions, often in object detection confidence scores
 
@@ -1144,11 +1144,11 @@ Then:
 
 - **Efficiency**: Binary cross-entropy is computationally simpler for two classes (one probability vs. a distribution)
 - **Task Fit**:  
-  - Use **cross-entropy** for multi-class tasks (e.g., ImageNet classification)  
-  - Use **binary cross-entropy** for yes/no problems (e.g., objectness in YOLO)
+- Use **cross-entropy** for multi-class tasks (e.g., ImageNet classification)  
+- Use **binary cross-entropy** for yes/no problems (e.g., objectness in YOLO)
 - **Implementation**:  
-  - TensorFlow/PyTorch offer `categorical_crossentropy` (multi-class) and `binary_crossentropy` (binary)  
-  - Label formats differ: one-hot for categorical, scalar for binary
+- TensorFlow/PyTorch offer `categorical_crossentropy` (multi-class) and `binary_crossentropy` (binary)  
+- Label formats differ: one-hot for categorical, scalar for binary
 
 ---
 
@@ -1178,16 +1178,16 @@ In my defect classification, I’d use cross-entropy for multiple types, but bin
 ## 🧩 Key Concepts
 
 - **Ground Truth (\( y \))**:  
-  The true label or target value for a sample (e.g., class label, bounding box coordinates).
+The true label or target value for a sample (e.g., class label, bounding box coordinates).
 
 - **Prediction ($\hat{y}$ or p)**:  
-  The model’s output after a forward pass (e.g., probabilities, regressed values).
+The model’s output after a forward pass (e.g., probabilities, regressed values).
 
 - **Error**:  
-  The difference between ground truth and prediction, quantified by a loss function.
+The difference between ground truth and prediction, quantified by a loss function.
 
 - **Backpropagation**:  
-  Uses this error to compute gradients and update weights to minimize loss.
+Uses this error to compute gradients and update weights to minimize loss.
 
 
 ## 🔄 Step-by-Step Process
@@ -1244,15 +1244,15 @@ $$
 
 **Propagate Backward**:
 - For a weight \( w \) in the last layer:  
-  $z = w \cdot a + b$
+$z = w \cdot a + b$
 
-  $\hat{y} = \text{softmax}(z)$
+$\hat{y} = \text{softmax}(z)$
 
 - Gradient:
 
-  $$
-  \frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w}
-  $$
+$$
+\frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w}
+$$
 
 
 - Since $\frac{\partial z}{\partial w} = a$ (activation from previous layer), the gradient depends on \( a \).
@@ -1293,15 +1293,15 @@ $$
 - \( y = 1 \), \( $\hat{y}$ = 0.7 \)
 - **Loss**:  
 
-  $$
-  L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = 0.357
-  $$
+$$
+L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = 0.357
+$$
 
 - **Gradient**: 
 
-  $$
-  \frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1 - \hat{y})} = \frac{0.7 - 1}{0.7 \cdot 0.3} \approx -1.43
-  $$
+$$
+\frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1 - \hat{y})} = \frac{0.7 - 1}{0.7 \cdot 0.3} \approx -1.43
+$$
 
 - **Update**: Weights shift to increase $( \hat{y} )$
 
@@ -1311,15 +1311,15 @@ $$
 - \( y = 10 \), \( \hat{y} = 12 \)
 - **Loss**: 
 
-  $$
-  L = (10 - 12)^2 = 4
-  $$
+$$
+L = (10 - 12)^2 = 4
+$$
 
 - **Gradient**:  
 
-  $$
-  \frac{\partial L}{\partial \hat{y}} = 2(\hat{y} - y) = 2(12 - 10) = 4
-  $$
+$$
+\frac{\partial L}{\partial \hat{y}} = 2(\hat{y} - y) = 2(12 - 10) = 4
+$$
 
 - **Update**: Weights decrease to pull $( \hat{y} )$ toward 10
 
@@ -1384,15 +1384,15 @@ The loss value is the cornerstone of training—it’s computed after the forwar
 - Ground Truth: \([0, 1]\), Prediction: \([0.3, 0.7]\)  
 - Loss: 
 
-  $$
-  L = -\log(0.7) \approx 0.357
-  $$
+$$
+L = -\log(0.7) \approx 0.357
+$$
 
 - Gradient at output:  
 
-  $$
-  \frac{\partial L}{\partial \hat{y}} = \hat{y} - y = [0.3, -0.3]
-  $$
+$$
+\frac{\partial L}{\partial \hat{y}} = \hat{y} - y = [0.3, -0.3]
+$$
 
 
 This propagates back to adjust convolutional filters or dense layer weights.
@@ -1404,18 +1404,18 @@ This propagates back to adjust convolutional filters or dense layer weights.
 - **Role**: The loss value, via its gradients, directs the optimizer (e.g., SGD, Adam) to update weights and minimize error.
 - **How**: 
 
-  $$
-  w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
-  $$
+$$
+w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
+$$
 
 
 **Example**:
 - Gradient: \(-0.3\), \( $\eta$ = 0.1 \), \( $w_{\text{old}}$ = 0.5 \)  
 - Update: 
 
-  $$
-  w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.53
-  $$
+$$
+w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.53
+$$
 
 
 **Result**: The model’s prediction shifts closer to the ground truth.
@@ -1457,7 +1457,7 @@ This propagates back to adjust convolutional filters or dense layer weights.
 ## 🔄 How Loss Ties Everything Together
 
 - **Forward Pass**: Loss is calculated from predictions and ground truth  
-   $L = -\log(p_{\text{correct}})$
+  $L = -\log(p_{\text{correct}})$
 - **Backward Pass**: Loss is differentiated to compute gradients
 - **Optimization**: Gradients update weights to reduce future loss
 - **Iteration**: This cycle repeats, driving loss toward a minimum
@@ -1467,9 +1467,9 @@ This propagates back to adjust convolutional filters or dense layer weights.
 ### 📌 Classification (Cross-Entropy)
 - **Loss**: 
 
-  $$
-  L = -\log(0.7) \approx 0.357 \quad \text{for } \hat{y} = [0.3, 0.7], \, y = [0, 1]
-  $$
+$$
+L = -\log(0.7) \approx 0.357 \quad \text{for } \hat{y} = [0.3, 0.7], \, y = [0, 1]
+$$
 
 - **Use**: Gradients adjust the final dense layer to boost \( $p_{\text{dog}}$ \), lowering loss in the next iteration.
 
@@ -1478,9 +1478,9 @@ This propagates back to adjust convolutional filters or dense layer weights.
 ### 📌 Regression (MSE)
 - **Loss**:  
 
-  $$
-  L = (10 - 12)^2 = 4 \quad \text{for } y = 10, \, \hat{y} = 12
-  $$
+$$
+L = (10 - 12)^2 = 4 \quad \text{for } y = 10, \, \hat{y} = 12
+$$
 
 - **Use**: Gradients push weights to reduce prediction error, aligning \( $\hat{y}$ \) with 10.
 
@@ -1488,8 +1488,8 @@ This propagates back to adjust convolutional filters or dense layer weights.
 
 ### 📌 Object Detection (YOLO Loss)
 - **Loss**: Combined loss (e.g., 35.328) from:
-  - MSE for bounding box coordinates
-  - Cross-entropy for class prediction
+- MSE for bounding box coordinates
+- Cross-entropy for class prediction
 - **Use**: Gradients tweak convolutional filters for better localization and dense layers for class scores.
 
 ---
@@ -1497,9 +1497,9 @@ This propagates back to adjust convolutional filters or dense layer weights.
 ### 📌 Segmentation (Dice Loss)
 - **Loss**:  
 
-  $$
-  L = 0.11 \quad \text{for mask overlap}
-  $$
+$$
+L = 0.11 \quad \text{for mask overlap}
+$$
 
 - **Use**: Gradients refine spatial filters to improve pixel-wise predictions.
 
@@ -1559,14 +1559,14 @@ Creating these splits involves dividing your dataset strategically to ensure the
 ### 🔹 Splitting Methods
 
 - **Random Split**: Randomly assign samples to train, validation, and test sets.  
-  _Example_: 70% train (7,000), 15% validation (1,500), 15% test (1,500)  
-  _Tools_: `train_test_split` from scikit-learn or manual shuffling.
+_Example_: 70% train (7,000), 15% validation (1,500), 15% test (1,500)  
+_Tools_: `train_test_split` from scikit-learn or manual shuffling.
 
 - **Stratified Split**: Ensure class proportions are preserved (critical for imbalanced data, like rare defects).  
-  _Example_: If 10% of images are "defect", each split maintains ~10% defects.
+_Example_: If 10% of images are "defect", each split maintains ~10% defects.
 
 - **Temporal/Sequential Split**: For time-series data (e.g., video frames), split by time to avoid leakage.  
-  _Example_: First 70% for train, next 15% for validation, last 15% for test.
+_Example_: First 70% for train, next 15% for validation, last 15% for test.
 
 ### 🔹 Practical Steps
 - **Labeling**: Ensure all data is labeled (e.g., "cat", "dog", or pixel masks).
@@ -1580,9 +1580,9 @@ Creating these splits involves dividing your dataset strategically to ensure the
 - **Dataset**: 10,000 images (9,000 "no defect", 1,000 "defect")
 - **Split**: 70-15-15 stratified
 - **Result**:
-  - **Train**: 6,300 "no defect", 700 "defect"
-  - **Validation**: 1,350 "no defect", 150 "defect"
-  - **Test**: 1,350 "no defect", 150 "defect"
+- **Train**: 6,300 "no defect", 700 "defect"
+- **Validation**: 1,350 "no defect", 150 "defect"
+- **Test**: 1,350 "no defect", 150 "defect"
 
 
 ## 🧠 How Are Train, Validation, and Test Data Used in CNN Models?
@@ -1595,9 +1595,9 @@ Each subset plays a specific role in the training and evaluation lifecycle:
 
 - **Use**: Fed into the CNN during the training loop.
 - **Process**:
-  - **Forward pass**: Compute predictions.
-  - **Loss**: Compare predictions to ground truth (e.g., cross-entropy).
-  - **Backpropagation**: Update weights using gradients.
+- **Forward pass**: Compute predictions.
+- **Loss**: Compare predictions to ground truth (e.g., cross-entropy).
+- **Backpropagation**: Update weights using gradients.
 - **Example**: In a defect detection CNN, 7,000 images adjust convolutional filters to detect defect patterns over multiple epochs.
 - **Frequency**: Used iteratively (e.g., 10–50 epochs), often in batches (e.g., 32 images).
 
@@ -1607,9 +1607,9 @@ Each subset plays a specific role in the training and evaluation lifecycle:
 
 - **Use**: Evaluated periodically during training (e.g., after each epoch) to check generalization.
 - **Process**:
-  - **Forward pass only**: Compute loss/accuracy on validation set, no weight updates.
-  - **Monitor**: Track metrics (e.g., validation loss, F1-score).
-  - **Decisions**: Adjust hyperparameters (e.g., learning rate), stop training if loss plateaus.
+- **Forward pass only**: Compute loss/accuracy on validation set, no weight updates.
+- **Monitor**: Track metrics (e.g., validation loss, F1-score).
+- **Decisions**: Adjust hyperparameters (e.g., learning rate), stop training if loss plateaus.
 - **Example**: Validation loss dropping from 0.5 to 0.3 signals improvement; rising to 0.4 might trigger early stopping.
 - **Frequency**: Checked after each epoch or a set number of iterations.
 
@@ -1619,8 +1619,8 @@ Each subset plays a specific role in the training and evaluation lifecycle:
 
 - **Use**: Assessed once after training to report final performance.
 - **Process**:
-  - **Forward pass** on test set with fixed weights.
-  - **Metrics**: Compute accuracy, precision, recall, etc., on unseen data.
+- **Forward pass** on test set with fixed weights.
+- **Metrics**: Compute accuracy, precision, recall, etc., on unseen data.
 - **Example**: Test accuracy of 92% on 1,500 images confirms the model’s real-world readiness for defect detection.
 - **Frequency**: Used only at the end, never during training.
 
@@ -1642,13 +1642,13 @@ Each subset plays a specific role in the training and evaluation lifecycle:
 
 - **Dataset**: 10,000 X-ray images
 - **Split**: 
-  - 70% train (learn defect edges)
-  - 15% validation (tune dropout)
-  - 15% test (final report)
+- 70% train (learn defect edges)
+- 15% validation (tune dropout)
+- 15% test (final report)
 - **Use**:
-  - Train adjusts filters
-  - Validation catches overfitting
-  - Test confirms 95% defect detection rate
+- Train adjusts filters
+- Validation catches overfitting
+- Test confirms 95% defect detection rate
 
 ---
 
@@ -1705,78 +1705,78 @@ L = -\log(0.572) \approx 0.559
 
 - **Gradient at Output**:
 
-  $$ 
-  \frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} = \frac{0.572 - 1}{0.572 \cdot 0.428} \approx -1.747 
-  $$
+$$ 
+\frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} = \frac{0.572 - 1}{0.572 \cdot 0.428} \approx -1.747 
+$$
 
 
 - **Gradient w.r.t. \( $z_3$ \)**:  
 
-  $$ 
-  \frac{\partial L}{\partial z_3} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z_3} 
-  $$  
+$$ 
+\frac{\partial L}{\partial z_3} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z_3} 
+$$  
 
-  where 
+where 
 
-  $$ 
-  \frac{\partial \hat{y}}{\partial z_3} = \sigma'(z_3) = \hat{y}(1-\hat{y}) = 0.572 \cdot 0.428 \approx 0.245 
-  $$  
+$$ 
+\frac{\partial \hat{y}}{\partial z_3} = \sigma'(z_3) = \hat{y}(1-\hat{y}) = 0.572 \cdot 0.428 \approx 0.245 
+$$  
 
-  $$ 
-  \frac{\partial L}{\partial z_3} = -1.747 \cdot 0.245 \approx -0.428
-  $$
+$$ 
+\frac{\partial L}{\partial z_3} = -1.747 \cdot 0.245 \approx -0.428
+$$
 
 
 - **Gradient w.r.t. \( $w_3$ \)**:  
 
-  $$ 
-  \frac{\partial L}{\partial w_3} = \frac{\partial L}{\partial z_3} \cdot a_2 = -0.428 \cdot 0.577 \approx -0.247 
-  $$
+$$ 
+\frac{\partial L}{\partial w_3} = \frac{\partial L}{\partial z_3} \cdot a_2 = -0.428 \cdot 0.577 \approx -0.247 
+$$
 
 ### 🔙 Now, propagate back:
 
 - **Gradient w.r.t. \( $z_2$ \)**:  
 
-  $$ 
-  \frac{\partial L}{\partial z_2} = \frac{\partial L}{\partial z_3} \cdot w_3 \cdot \sigma'(z_2) 
-  $$  
+$$ 
+\frac{\partial L}{\partial z_2} = \frac{\partial L}{\partial z_3} \cdot w_3 \cdot \sigma'(z_2) 
+$$  
 
-  where  
-  $$ 
-  \sigma'(z_2) = 0.577 \cdot (1 - 0.577) \approx 0.244 
-  $$  
+where  
+$$ 
+\sigma'(z_2) = 0.577 \cdot (1 - 0.577) \approx 0.244 
+$$  
 
-  $$ 
-  \frac{\partial L}{\partial z_2} = -0.428 \cdot 0.5 \cdot 0.244 \approx -0.052 
-  $$
+$$ 
+\frac{\partial L}{\partial z_2} = -0.428 \cdot 0.5 \cdot 0.244 \approx -0.052 
+$$
 
 - **Gradient w.r.t. \( $w_2$ \)**:  
 
-  $$ 
-  \frac{\partial L}{\partial w_2} = -0.052 \cdot 0.622 \approx -0.032 
-  $$
+$$ 
+\frac{\partial L}{\partial w_2} = -0.052 \cdot 0.622 \approx -0.032 
+$$
 
 
 - **Gradient w.r.t. \( $z_1$ \)**:  
 
-  $$ 
-  \frac{\partial L}{\partial z_1} = \frac{\partial L}{\partial z_2} \cdot w_2 \cdot \sigma'(z_1)
-  $$
+$$ 
+\frac{\partial L}{\partial z_1} = \frac{\partial L}{\partial z_2} \cdot w_2 \cdot \sigma'(z_1)
+$$
 
-  where
+where
 
-  $$
-  \sigma'(z_1) = 0.622 \cdot 0.378 \approx 0.235 
-  $$  
+$$
+\sigma'(z_1) = 0.622 \cdot 0.378 \approx 0.235 
+$$  
 
+$$
+  \frac{\partial L}{\partial z_1} = -0.052 \cdot 0.5 \cdot 0.235 \approx -0.006 
   $$
-   \frac{\partial L}{\partial z_1} = -0.052 \cdot 0.5 \cdot 0.235 \approx -0.006 
-   $$
 
 - **Gradient w.r.t. \( $w_1$ \)**:  
-  $$ 
-  \frac{\partial L}{\partial w_1} = -0.006 \cdot 1 \approx -0.006 
-  $$
+$$ 
+\frac{\partial L}{\partial w_1} = -0.006 \cdot 1 \approx -0.006 
+$$
 
 
 ---
@@ -1784,7 +1784,7 @@ L = -\log(0.572) \approx 0.559
 ## 🧊 Vanishing in Action
 
 - Notice the gradient shrinks:  
-  \( $w_3: -0.247$ $\rightarrow w_2: -0.032 \rightarrow w_1: -0.006$ \)
+\( $w_3: -0.247$ $\rightarrow w_2: -0.032 \rightarrow w_1: -0.006$ \)
 
 - Each layer multiplies by a small factor (< 1) from \( $\sigma'(z)$ \) (max 0.25 for sigmoid) and weights (0.5 here).
 
@@ -1795,41 +1795,41 @@ L = -\log(0.572) \approx 0.559
 ## ⚠️ Why It’s a Problem
 
 - **Early Layers Don’t Learn**:  
-  \( $w_1$ \)'s tiny gradient (0.006) means it barely updates:  
-  \( $w_1 = 0.5 - 0.1 \cdot 0.006 = 0.4994$ \), stalling feature extraction (e.g., edges in conv layers).
+\( $w_1$ \)'s tiny gradient (0.006) means it barely updates:  
+\( $w_1 = 0.5 - 0.1 \cdot 0.006 = 0.4994$ \), stalling feature extraction (e.g., edges in conv layers).
 
 - **Slow Training**:  
-  Deep networks can’t adjust early layers to capture complex patterns, like defect shapes in your projects.
+Deep networks can’t adjust early layers to capture complex patterns, like defect shapes in your projects.
 
 ---
 
 ## 🌐 Real-World Context
 
 - **Your Experience**:  
-  In a 50-layer CNN for segmentation, vanishing gradients might prevent early conv layers from learning low-level features (e.g., edges), leaving the model stuck with high loss.
+In a 50-layer CNN for segmentation, vanishing gradients might prevent early conv layers from learning low-level features (e.g., edges), leaving the model stuck with high loss.
 
 - **Symptoms**:  
-  Training loss plateaus early (e.g., 1.5), despite capacity for better performance.
+Training loss plateaus early (e.g., 1.5), despite capacity for better performance.
 
 ---
 
 ## 🛠️ Solutions (You’ve Likely Used)
 
 - **ReLU Activation**:  
-  \( $\sigma'(z) = 1$ \) for \( $z > 0$ \), avoiding small derivatives (unlike sigmoid’s 0.25 max).
+\( $\sigma'(z) = 1$ \) for \( $z > 0$ \), avoiding small derivatives (unlike sigmoid’s 0.25 max).
 
 - **Weight Initialization**:  
-  Xavier or He initialization keeps gradients stable.
+Xavier or He initialization keeps gradients stable.
 
 - **Skip Connections**:  
-  ResNet’s shortcuts bypass layers, preserving gradients.
+ResNet’s shortcuts bypass layers, preserving gradients.
 
 - **Batch Normalization**:  
-  Normalizes activations, stabilizing gradient flow.
+Normalizes activations, stabilizing gradient flow.
 
 - **Example Fix**:  
-  Swap sigmoid for ReLU—gradients stay closer to 1, so  
-  \( $\frac{\partial L}{\partial w_1}$ \) might be -0.1 instead of -0.006, enabling learning.
+Swap sigmoid for ReLU—gradients stay closer to 1, so  
+\( $\frac{\partial L}{\partial w_1}$ \) might be -0.1 instead of -0.006, enabling learning.
 
 ---
 
@@ -1856,10 +1856,10 @@ BN operates on a mini-batch of data (e.g., 32 images) and is typically applied b
 For a mini-batch \( B = \{x_1, x_2, ..., x_m\} \) (where \( m \) is batch size):
 
 - **Mean**:  
-  $$ \mu_B = \frac{1}{m} \sum_{i=1}^{m} x_i $$
+$$ \mu_B = \frac{1}{m} \sum_{i=1}^{m} x_i $$
 
 - **Variance**:  
-  $$ \sigma_B^2 = \frac{1}{m} \sum_{i=1}^{m} (x_i - \mu_B)^2 $$
+$$ \sigma_B^2 = \frac{1}{m} \sum_{i=1}^{m} (x_i - \mu_B)^2 $$
 
 ### 2. Normalize:
 Standardize each input:  
@@ -1891,7 +1891,7 @@ Why? Allows the network to undo normalization if needed, preserving representati
 Imagine a conv layer in your defect detection CNN processing a batch of 4 images:
 
 - **Input Activations (pre-BN)**:  
-  \( $x = [2.0, 0.5, -1.0, 1.5]$ \)
+\( $x = [2.0, 0.5, -1.0, 1.5]$ \)
 
 ### Step 1: Batch Mean and Variance
 -  $\mu_B = \frac{2.0 + 0.5 + (-1.0) + 1.5}{4} = 0.75$ 
@@ -1913,7 +1913,7 @@ Check: Mean of [1.09, -0.22, -1.53, 0.65] ≈ 0, variance ≈ 1
 
 ### Step 3: Scale and Shift
 - Initial \( $\gamma = 1$ \), \( $\beta = 0$ \):  
-  $y_i = 1 \cdot \hat{x}_i + 0 = \hat{x}_i$ 
+$y_i = 1 \cdot \hat{x}_i + 0 = \hat{x}_i$ 
 
 **Output**: [1.09, -0.22, -1.53, 0.65], then to ReLU.
 
@@ -1964,10 +1964,10 @@ Check: Mean of [1.09, -0.22, -1.53, 0.65] ≈ 0, variance ≈ 1
 import tensorflow as tf
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(32, 3, padding='same', input_shape=(32, 32, 3)),
-    tf.keras.layers.BatchNormalization(),  # BN layer
-    tf.keras.layers.ReLU(),
-    # ... more layers
+  tf.keras.layers.Conv2D(32, 3, padding='same', input_shape=(32, 32, 3)),
+  tf.keras.layers.BatchNormalization(),  # BN layer
+  tf.keras.layers.ReLU(),
+  # ... more layers
 ])
 ```
 
@@ -1998,42 +1998,42 @@ Imagine the loss function as a hilly landscape—gradient descent finds the lowe
 Gradient Descent uses the gradient (partial derivative of the loss with respect to each parameter) to determine the direction and size of updates. Here’s the process:
 
 - **Compute the Loss**:
-  - Forward pass generates predictions, and loss is calculated (e.g., cross-entropy for classification).
-  - Example: 
+- Forward pass generates predictions, and loss is calculated (e.g., cross-entropy for classification).
+- Example: 
 
-    $$ 
-    L = -\log(0.7) \approx 0.357 
-    $$  
+  $$ 
+  L = -\log(0.7) \approx 0.357 
+  $$  
 
-    for prediction [0.3, 0.7] vs. ground truth [0, 1].
+  for prediction [0.3, 0.7] vs. ground truth [0, 1].
 
 - **Calculate Gradients via Backpropagation**:
-  - Gradient:  
+- Gradient:  
 
-    $$
-    \frac{\partial L}{\partial w} 
-    $$  
+  $$
+  \frac{\partial L}{\partial w} 
+  $$  
 
-    shows how much the loss changes with a small change in weight \( w \).
-  - Example:  
-    $$
-    \frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] 
-    $$  
+  shows how much the loss changes with a small change in weight \( w \).
+- Example:  
+  $$
+  \frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] 
+  $$  
 
-    propagated back to weights.
+  propagated back to weights.
 
 - **Update Weights**:
-  - Rule:
+- Rule:
 
-    $$
-     w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
-      $$  
+  $$
+    w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
+    $$  
 
-    where *$\eta$*   (learning rate) controls step size.
-  - Direction: Negative gradient points downhill (toward lower loss).
+  where *$\eta$*   (learning rate) controls step size.
+- Direction: Negative gradient points downhill (toward lower loss).
 
 - **Iterate**:
-  - Repeat until loss converges or a set number of epochs is reached.
+- Repeat until loss converges or a set number of epochs is reached.
 
 ---
 
@@ -2043,24 +2043,24 @@ Let’s use a toy regression example to illustrate (similar principles apply to 
 
 - **Model**: 
 
-  $$ 
-  \hat{y} = w \cdot x + b 
-  $$  
+$$ 
+\hat{y} = w \cdot x + b 
+$$  
 
-  Predict \( $y = 4$ \) when \( $x = 2$ \)
+Predict \( $y = 4$ \) when \( $x = 2$ \)
 
 - **Loss**:  
-  Mean Squared Error  
+Mean Squared Error  
 
-  $$ 
-  L = (y - \hat{y})^2 
-  $$
+$$ 
+L = (y - \hat{y})^2 
+$$
 
 - **Initial Weights**:  
-  \( $w = 1$ \), \( $b = 0$ \)
+\( $w = 1$ \), \( $b = 0$ \)
 
 - **Learning Rate**:  
-  \( $\eta = 0.1$ \)
+\( $\eta = 0.1$ \)
 
 ### Step 1: Forward Pass
 - \( $\hat{y} = 1 \cdot 2 + 0 = 2$ \)
@@ -2069,11 +2069,11 @@ Let’s use a toy regression example to illustrate (similar principles apply to 
 ### Step 2: Compute Gradients
 - \( $\frac{\partial L}{\partial \hat{y}} = 2 (\hat{y} - y) = 2 (2 - 4) = -4$ \)
 - \( $\frac{\partial \hat{y}}{\partial w} = x = 2$ \),  
-  \( $\frac{\partial \hat{y}}{\partial b} = 1$ \)
+\( $\frac{\partial \hat{y}}{\partial b} = 1$ \)
 
 - Chain rule:
-  - \( $\frac{\partial L}{\partial w} = -4 \cdot 2 = -8$ \)
-  - \( $\frac{\partial L}{\partial b} = -4 \cdot 1 = -4$ \)
+- \( $\frac{\partial L}{\partial w} = -4 \cdot 2 = -8$ \)
+- \( $\frac{\partial L}{\partial b} = -4 \cdot 1 = -4$ \)
 
 ### Step 3: Update Weights
 - \( $w_{\text{new}} = 1 - 0.1 \cdot (-8) = 1 + 0.8 = 1.8$ \)
@@ -2109,13 +2109,13 @@ Gradient descent moved \( $\hat{y}$ \) closer to \( $y$ \), reducing loss.
 ## 📌 Why It Matters in CNNs
 
 - **Loss Minimization**:  
-  In your defect detection CNN, gradient descent adjusts conv filters and dense layers to reduce cross-entropy loss, improving defect recall.
+In your defect detection CNN, gradient descent adjusts conv filters and dense layers to reduce cross-entropy loss, improving defect recall.
 
 - **Gradient Flow**:  
-  Ties to vanishing gradients—small steps in deep layers need fixes like Batch Normalization (BN) or ReLU (you’ve likely used these).
+Ties to vanishing gradients—small steps in deep layers need fixes like Batch Normalization (BN) or ReLU (you’ve likely used these).
 
 - **Learning Rate Tuning**:  
-  Too high (e.g., \( $\eta = 1$ \)) overshoots; too low (e.g., \( $\eta = 0.0001$ \)) is slow—your experience likely includes tweaking this.
+Too high (e.g., \( $\eta = 1$ \)) overshoots; too low (e.g., \( $\eta = 0.0001$ \)) is slow—your experience likely includes tweaking this.
 
 ---
 
@@ -2131,13 +2131,13 @@ Gradient descent moved \( $\hat{y}$ \) closer to \( $y$ \), reducing loss.
 ## ⚠️ Challenges and Fixes
 
 - **Vanishing Gradients**:  
-  Small gradients halt learning—BN or ReLU help (as discussed).
+Small gradients halt learning—BN or ReLU help (as discussed).
 
 - **Local Minima**:  
-  Modern optimizers (e.g., Adam) add momentum to escape.
+Modern optimizers (e.g., Adam) add momentum to escape.
 
 - **Learning Rate**:  
-  Adaptive methods (e.g., Adam) adjust \( $\eta$ \) dynamically.
+Adaptive methods (e.g., Adam) adjust \( $\eta$ \) dynamically.
 
 ---
 
@@ -2165,23 +2165,23 @@ In my CNNs, like defect detection, mini-batch gradient descent tunes filters ove
 ## 🔁 How Optimizers Work (Basic Idea)
 
 - **Gradient Computation**:  
-  Backpropagation gives  
+Backpropagation gives  
 
-  $$ 
-  \frac{\partial L}{\partial w} 
-  $$  
+$$ 
+\frac{\partial L}{\partial w} 
+$$  
 
-  the direction of steepest loss increase.
+the direction of steepest loss increase.
 
 - **Update Rule**:
 
-  $$ 
-  w_{\text{new}} = w_{\text{old}} - \text{step} 
-  $$
+$$ 
+w_{\text{new}} = w_{\text{old}} - \text{step} 
+$$
 
 
 - **Step Size**:  
-  Controlled by the learning rate \( $\eta$ \) and enhanced by optimizer-specific logic.
+Controlled by the learning rate \( $\eta$ \) and enhanced by optimizer-specific logic.
 
 ---
 
@@ -2202,23 +2202,23 @@ Where:
 - **How**: Updates weights using the full dataset’s gradient.  
 - **Update**:  
 
-  $$
-  w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
-  $$
+$$
+w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
+$$
 
 - **Example**:
 
-  $$
-  \hat{y} = 1 \cdot 2 = 2,\quad L = (4 - 2)^2 = 4
-  $$
+$$
+\hat{y} = 1 \cdot 2 = 2,\quad L = (4 - 2)^2 = 4
+$$
 
-  $$
-  \frac{\partial L}{\partial w} = 2(2 - 4) \cdot 2 = -8
-  $$ 
+$$
+\frac{\partial L}{\partial w} = 2(2 - 4) \cdot 2 = -8
+$$ 
 
-  $$
-  w = 1 - 0.1 \cdot (-8) = 1.8,\quad \hat{y} = 3.6,\quad L = 0.16
-  $$
+$$
+w = 1 - 0.1 \cdot (-8) = 1.8,\quad \hat{y} = 3.6,\quad L = 0.16
+$$
 
 - **Need**: Accurate but slow—impractical for large datasets.
 
@@ -2242,28 +2242,28 @@ Where:
 - **How**: Adds velocity to SGD.  
 - **Update**:  
 
-  $$
-  v_t = \beta v_{t-1} + (1 - \beta) \cdot \frac{\partial L}{\partial w}
-  $$  
+$$
+v_t = \beta v_{t-1} + (1 - \beta) \cdot \frac{\partial L}{\partial w}
+$$  
 
-  $$
-  w = w - \eta \cdot v_t
-  $$ 
+$$
+w = w - \eta \cdot v_t
+$$ 
 
-  where $\beta$ (e.g., 0.9) is momentum.
+where $\beta$ (e.g., 0.9) is momentum.
 - **Example**: 
 
-  $$
-  v_0 = 0,\quad \frac{\partial L}{\partial w} = -8
-  $$  
+$$
+v_0 = 0,\quad \frac{\partial L}{\partial w} = -8
+$$  
 
-  $$
-  v_1 = 0.9 \cdot 0 + 0.1 \cdot (-8) = -0.8
-  $$  
+$$
+v_1 = 0.9 \cdot 0 + 0.1 \cdot (-8) = -0.8
+$$  
 
-  $$
-  w = 1 - 0.1 \cdot (-0.8) = 1.08
-  $$
+$$
+w = 1 - 0.1 \cdot (-0.8) = 1.08
+$$
 
 - **Need**: Helps escape shallow minima, faster convergence.
 
@@ -2273,22 +2273,22 @@ Where:
 - **How**: Adapts $\eta$ per parameter.  
 - **Update**: 
 
-  $$
-  G_t = G_{t-1} + \left(\frac{\partial L}{\partial w}\right)^2
-  $$ 
+$$
+G_t = G_{t-1} + \left(\frac{\partial L}{\partial w}\right)^2
+$$ 
 
-  $$
-  w = w - \frac{\eta}{\sqrt{G_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
-  $$
+$$
+w = w - \frac{\eta}{\sqrt{G_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
+$$
 
 - **Example**:  
-  $$
-  G_0 = 0,\quad \frac{\partial L}{\partial w} = -8,\quad G_1 = 64
-  $$  
+$$
+G_0 = 0,\quad \frac{\partial L}{\partial w} = -8,\quad G_1 = 64
+$$  
 
-  $$
-  w = 1 - \frac{0.1}{\sqrt{64 + 10^{-8}}} \cdot (-8) = 1.1
-  $$
+$$
+w = 1 - \frac{0.1}{\sqrt{64 + 10^{-8}}} \cdot (-8) = 1.1
+$$
 
 - **Need**: Great for sparse data, but slows too much.
 
@@ -2298,27 +2298,27 @@ Where:
 - **How**: Uses exponentially decaying average of gradients.  
 - **Update**: 
 
-  $$
-  E[G^2]_t = \rho E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
-  $$ 
+$$
+E[G^2]_t = \rho E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
+$$ 
 
-  $$
-  w = w - \frac{\eta}{\sqrt{E[G^2]_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
-  $$
+$$
+w = w - \frac{\eta}{\sqrt{E[G^2]_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
+$$
 
 - **Example**: 
 
-  $$
-  E[G^2]_0 = 0,\quad \frac{\partial L}{\partial w} = -8
-  $$  
+$$
+E[G^2]_0 = 0,\quad \frac{\partial L}{\partial w} = -8
+$$  
 
-  $$
-  E[G^2]_1 = 0.9 \cdot 0 + 0.1 \cdot 64 = 6.4
-  $$  
+$$
+E[G^2]_1 = 0.9 \cdot 0 + 0.1 \cdot 64 = 6.4
+$$  
 
-  $$
-  w = 1 - \frac{0.1}{\sqrt{6.4}} \cdot (-8) \approx 1.316
-  $$
+$$
+w = 1 - \frac{0.1}{\sqrt{6.4}} \cdot (-8) \approx 1.316
+$$
 
 - **Need**: Prevents AdaGrad’s stalling, good for non-convex loss.
 
@@ -2328,32 +2328,32 @@ Where:
 - **How**: Combines momentum and RMSProp.  
 - **Update**:  
 
-  $$
-  m_t = \beta_1 m_{t-1} + (1 - \beta_1) \frac{\partial L}{\partial w}
-  $$  
+$$
+m_t = \beta_1 m_{t-1} + (1 - \beta_1) \frac{\partial L}{\partial w}
+$$  
 
-  $$
-  v_t = \beta_2 v_{t-1} + (1 - \beta_2) \left(\frac{\partial L}{\partial w}\right)^2
-  $$  
+$$
+v_t = \beta_2 v_{t-1} + (1 - \beta_2) \left(\frac{\partial L}{\partial w}\right)^2
+$$  
 
-  $$
-  \hat{m}_t = \frac{m_t}{1 - \beta_1^t},\quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}
-  $$  
+$$
+\hat{m}_t = \frac{m_t}{1 - \beta_1^t},\quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}
+$$  
 
-  $$
-  w = w - \frac{\eta \hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
-  $$
+$$
+w = w - \frac{\eta \hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+$$
 
 - **Example**:  
-  $$
-  m_1 = 0.1 \cdot (-8) = -0.8,\quad v_1 = 0.001 \cdot 64 = 0.064
-  $$  
+$$
+m_1 = 0.1 \cdot (-8) = -0.8,\quad v_1 = 0.001 \cdot 64 = 0.064
+$$  
 
-  After bias correction, 
+After bias correction, 
 
-  $$
-  w \approx 1.8
-  $$
+$$
+w \approx 1.8
+$$
 
 - **Need**: Robust and fast—default in many deep learning tasks.
 
@@ -2427,22 +2427,22 @@ The key difference lies in how much data they use to compute these gradients and
 ### 🧮 Gradient Descent (GD)
 
 - **Process**:
-  - Perform a forward pass on the entire training dataset to compute predictions.
-  - Calculate the loss across all samples.
-  - Compute the average gradient of the loss with respect to each weight.
-  - Update weights once using this gradient.
+- Perform a forward pass on the entire training dataset to compute predictions.
+- Calculate the loss across all samples.
+- Compute the average gradient of the loss with respect to each weight.
+- Update weights once using this gradient.
 
 - **Update Rule**:
 
-  $$
-  w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{1}{N} \sum_{i=1}^{N} \frac{\partial L_i}{\partial w}
-  $$
+$$
+w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{1}{N} \sum_{i=1}^{N} \frac{\partial L_i}{\partial w}
+$$
 
 
-  Where:
-  - \( $N$ \): Total number of samples  
-  - \( $L_i$ \): Loss for sample \( i \)  
-  - \( $\eta$ \): Learning rate
+Where:
+- \( $N$ \): Total number of samples  
+- \( $L_i$ \): Loss for sample \( i \)  
+- \( $\eta$ \): Learning rate
 
 - **Frequency**: One update per epoch (full dataset pass)
 
@@ -2451,20 +2451,20 @@ The key difference lies in how much data they use to compute these gradients and
 ### ⚡ Stochastic Gradient Descent (SGD)
 
 - **Process**:
-  - Perform a forward pass on a single sample (or mini-batch in practice).
-  - Calculate the loss for that sample.
-  - Compute the gradient for that sample alone.
-  - Update weights immediately using this gradient.
+- Perform a forward pass on a single sample (or mini-batch in practice).
+- Calculate the loss for that sample.
+- Compute the gradient for that sample alone.
+- Update weights immediately using this gradient.
 
 - **Update Rule**:
 
-  $$
-  w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L_i}{\partial w}
-  $$
+$$
+w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L_i}{\partial w}
+$$
 
 
-  Where:
-  - \( $L_i$ \): Loss for the current sample \( $i$ \)
+Where:
+- \( $L_i$ \): Loss for the current sample \( $i$ \)
 
 - **Frequency**: \( $N$ \) updates per epoch (one per sample in pure SGD)
 
@@ -2480,7 +2480,7 @@ Let’s use a toy problem to compare:
 - Learning rate: $( \eta = 0.1 )$
 - Loss function: $( L = (y - \hat{y})^2 )$
 - Dataset: 3 samples  
-  $( (x, y) = [(2, 4), (1, 2), (3, 6)] )$
+$( (x, y) = [(2, 4), (1, 2), (3, 6)] )$
 
 ---
 
@@ -2488,44 +2488,44 @@ Let’s use a toy problem to compare:
 
 - **Forward Pass (All Samples)**:
 
-  $$
-  \hat{y}_1 = 1 \cdot 2 = 2,\quad L_1 = (4 - 2)^2 = 4 \\
-  \hat{y}_2 = 1 \cdot 1 = 1,\quad L_2 = (2 - 1)^2 = 1 \\
-  \hat{y}_3 = 1 \cdot 3 = 3,\quad L_3 = (6 - 3)^2 = 9
-  $$
+$$
+\hat{y}_1 = 1 \cdot 2 = 2,\quad L_1 = (4 - 2)^2 = 4 \\
+\hat{y}_2 = 1 \cdot 1 = 1,\quad L_2 = (2 - 1)^2 = 1 \\
+\hat{y}_3 = 1 \cdot 3 = 3,\quad L_3 = (6 - 3)^2 = 9
+$$
 
-  $$
-  \text{Total Loss: } L = \frac{4 + 1 + 9}{3} = 4.67
-  $$
+$$
+\text{Total Loss: } L = \frac{4 + 1 + 9}{3} = 4.67
+$$
 
 
 - **Gradient**:
 
-  $$
-  \frac{\partial L_i}{\partial w} = 2 (\hat{y}_i - y_i) \cdot x_i
-  $$
+$$
+\frac{\partial L_i}{\partial w} = 2 (\hat{y}_i - y_i) \cdot x_i
+$$
 
-  $$
-  \text{Sample 1: } 2 (2 - 4) \cdot 2 = -8 \\
-  \text{Sample 2: } 2 (1 - 2) \cdot 1 = -2 \\
-  \text{Sample 3: } 2 (3 - 6) \cdot 3 = -18
-  $$
+$$
+\text{Sample 1: } 2 (2 - 4) \cdot 2 = -8 \\
+\text{Sample 2: } 2 (1 - 2) \cdot 1 = -2 \\
+\text{Sample 3: } 2 (3 - 6) \cdot 3 = -18
+$$
 
-  $$
-  \text{Average Gradient: } \frac{-8 + (-2) + (-18)}{3} = -9.33
-  $$
+$$
+\text{Average Gradient: } \frac{-8 + (-2) + (-18)}{3} = -9.33
+$$
 
 - **Update**:
 
-  $$
-  w = 1 - 0.1 \cdot (-9.33) = 1 + 0.933 = 1.933
-  $$
+$$
+w = 1 - 0.1 \cdot (-9.33) = 1 + 0.933 = 1.933
+$$
 
 - **Next Loss**:
 
-  $$
-  L \approx 0.18 \quad \text{(averaged across all samples)}
-  $$
+$$
+L \approx 0.18 \quad \text{(averaged across all samples)}
+$$
 
 - **Key**: One precise step per epoch.
 
@@ -2535,29 +2535,29 @@ Let’s use a toy problem to compare:
 
 - **Sample 1** \( (x = 2, y = 4) \):
 
-  $$
-  \hat{y} = 1 \cdot 2 = 2,\quad L = 4 \\
-  \text{Gradient: } 2 (2 - 4) \cdot 2 = -8 \\
-  w = 1 - 0.1 \cdot (-8) = 1.8
-  $$
+$$
+\hat{y} = 1 \cdot 2 = 2,\quad L = 4 \\
+\text{Gradient: } 2 (2 - 4) \cdot 2 = -8 \\
+w = 1 - 0.1 \cdot (-8) = 1.8
+$$
 
 
 - **Sample 2** \( (x = 1, y = 2) \):
 
-  $$
-  \hat{y} = 1.8 \cdot 1 = 1.8,\quad L = (2 - 1.8)^2 = 0.04 \\
-  \text{Gradient: } 2 (1.8 - 2) \cdot 1 = -0.4 \\
-  w = 1.8 - 0.1 \cdot (-0.4) = 1.84
-  $$
+$$
+\hat{y} = 1.8 \cdot 1 = 1.8,\quad L = (2 - 1.8)^2 = 0.04 \\
+\text{Gradient: } 2 (1.8 - 2) \cdot 1 = -0.4 \\
+w = 1.8 - 0.1 \cdot (-0.4) = 1.84
+$$
 
 
 - **Sample 3** \( (x = 3, y = 6) \):
 
-  $$
-  \hat{y} = 1.84 \cdot 3 = 5.52,\quad L = (6 - 5.52)^2 = 0.23 \\
-  \text{Gradient: } 2 (5.52 - 6) \cdot 3 = -2.88 \\
-  w = 1.84 - 0.1 \cdot (-2.88) = 2.128
-  $$
+$$
+\hat{y} = 1.84 \cdot 3 = 5.52,\quad L = (6 - 5.52)^2 = 0.23 \\
+\text{Gradient: } 2 (5.52 - 6) \cdot 3 = -2.88 \\
+w = 1.84 - 0.1 \cdot (-2.88) = 2.128
+$$
 
 
 - **Next Epoch**: Loss keeps dropping with more updates.
@@ -2723,11 +2723,11 @@ Dropout is a regularization technique that randomly "drops" (sets to zero) a sub
 Introduced by Srivastava et al. in 2014, it’s like temporarily disabling parts of the network to prevent over-reliance on specific features or paths.
 
 - **How It Works**:  
-  During training, each neuron is kept with probability $( p )$ (e.g., 0.5) and dropped with probability $( 1 - p )$.  
-  Dropped neurons don’t contribute to forward or backward passes in that iteration.
+During training, each neuron is kept with probability $( p )$ (e.g., 0.5) and dropped with probability $( 1 - p )$.  
+Dropped neurons don’t contribute to forward or backward passes in that iteration.
 
 - **Key Parameter**:  
-  Dropout rate (e.g., 0.5 means 50% of neurons are dropped).
+Dropout rate (e.g., 0.5 means 50% of neurons are dropped).
 
 ---
 
@@ -2738,13 +2738,13 @@ Dropout is applied only during training and has several key benefits:
 ### ✅ Prevents Overfitting
 - **Why**: By randomly dropping neurons, the network can’t rely too heavily on any single neuron or feature, forcing it to learn more robust, generalized patterns.
 - **Example**: In a CNN classifying defects, without dropout, it might overfit to specific textures (e.g., a scratch’s exact shape on 90% of training images).  
-  With dropout (e.g., 0.5), half the neurons drop each iteration, so it learns broader defect cues, improving test accuracy from 60% to 75%.
+With dropout (e.g., 0.5), half the neurons drop each iteration, so it learns broader defect cues, improving test accuracy from 60% to 75%.
 - **Mechanism**: Acts like training an ensemble of smaller sub-networks, averaging their behavior.
 
 ### 🔄 Reduces Co-Adaptation
 - **Why**: Neurons can’t depend on specific others being active, encouraging independent feature learning.
 - **Example**: In your segmentation CNN, a filter detecting edges might co-adapt with another for corners.  
-  Dropout breaks this, making each filter more self-sufficient.
+Dropout breaks this, making each filter more self-sufficient.
 
 ### 🔊 Adds Noise for Robustness
 - **Why**: Randomly zeroing activations introduces noise, similar to data augmentation, making the model less sensitive to small changes.
@@ -2753,28 +2753,28 @@ Dropout is applied only during training and has several key benefits:
 ### 🌐 Improves Generalization
 - **Why**: By simulating multiple network architectures, dropout reduces memorization of training data quirks.
 - **Math Intuition**:  
-  If $( p = 0.5 )$, each iteration trains a different sub-network.  
-  For $( n )$ neurons, there are approximately $( 2^n )$ possible combinations — approximating an ensemble.
+If $( p = 0.5 )$, each iteration trains a different sub-network.  
+For $( n )$ neurons, there are approximately $( 2^n )$ possible combinations — approximating an ensemble.
 
 ---
 
 ## ⚙️ Training Process with Dropout
 
 - **Forward Pass**:  
-  Randomly mask neurons  
-  e.g., $([1.2, 0.5, -0.8] \rightarrow [1.2, 0, -0.8])$ if the second neuron drops.
+Randomly mask neurons  
+e.g., $([1.2, 0.5, -0.8] \rightarrow [1.2, 0, -0.8])$ if the second neuron drops.
 
 - **Loss**:  
-  Computed on remaining activations.
+Computed on remaining activations.
 
 - **Backpropagation**:  
-  Gradients update only active weights; dropped neurons’ weights stay unchanged that iteration.
+Gradients update only active weights; dropped neurons’ weights stay unchanged that iteration.
 
 - **Next Iteration**:  
-  New random mask  
-  e.g., \([0, 0.5, -0.8]\)
+New random mask  
+e.g., \([0, 0.5, -0.8]\)
 
-  ## 🧪 How Dropout Works in Inference
+## 🧪 How Dropout Works in Inference
 
 During inference (testing or deployment), dropout is turned off, and the full network is used — but with a twist:
 
@@ -2784,26 +2784,26 @@ During inference (testing or deployment), dropout is turned off, and the full ne
 
 ### ⚖️ Weight Scaling
 - **Why**: During training, only a fraction $( p )$ of neurons contribute e.g., 50% with $( p = 0.5 )$.  
-  At inference, all neurons are active, so outputs would be larger unless adjusted.
+At inference, all neurons are active, so outputs would be larger unless adjusted.
 - **How**: Weights are scaled by $( p )$  
-  (e.g., multiplied by 0.5 if dropout rate was 0.5).  
-  This mimics the expected output from training’s averaged sub-networks.
+(e.g., multiplied by 0.5 if dropout rate was 0.5).  
+This mimics the expected output from training’s averaged sub-networks.
 - **Alternative (Inverted Dropout)**:  
-  Scale activations by $( \frac{1}{p} )$ during training, so no scaling is needed at inference — common in frameworks like TensorFlow and PyTorch.
+Scale activations by $( \frac{1}{p} )$ during training, so no scaling is needed at inference — common in frameworks like TensorFlow and PyTorch.
 
 ---
 
 ### 📌 Inference Example
 
 - **Training**:  
-  Dense layer with dropout 0.5, weights  
-  $( w = [1, 2, 3] )$, random mask  
-  $( [1, 0, 1] \rightarrow \text{output uses } [1, 0, 3] )$
+Dense layer with dropout 0.5, weights  
+$( w = [1, 2, 3] )$, random mask  
+$( [1, 0, 1] \rightarrow \text{output uses } [1, 0, 3] )$
 
 - **Inference**:  
-  Full weights  
-  $( [1, 2, 3] \cdot 0.5 = [0.5, 1, 1.5] )$,  
-  all neurons active, scaled output matches training expectation.
+Full weights  
+$( [1, 2, 3] \cdot 0.5 = [0.5, 1, 1.5] )$,  
+all neurons active, scaled output matches training expectation.
 
 ---
 
@@ -2819,12 +2819,12 @@ During inference (testing or deployment), dropout is turned off, and the full ne
 ### ✅ With Dropout (0.5)
 - **Training**: Randomly drops 50% of dense layer neurons each iteration, forcing diverse feature learning
 - **Result**:  
-  - Loss drops from 0.8 to 0.4  
-  - Test accuracy rises to 85% — better generalization to unseen defects
+- Loss drops from 0.8 to 0.4  
+- Test accuracy rises to 85% — better generalization to unseen defects
 
 - **Inference**:  
-  Full network used, weights scaled (e.g., $( w \cdot 0.5 )$),  
-  predicts reliably on new X-rays
+Full network used, weights scaled (e.g., $( w \cdot 0.5 )$),  
+predicts reliably on new X-rays
 
 
 ## 🧪 Implementation (TensorFlow Example)
@@ -2833,12 +2833,12 @@ During inference (testing or deployment), dropout is turned off, and the full ne
 import tensorflow as tf
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(32, 3, activation='relu', input_shape=(32, 32, 3)),
-    tf.keras.layers.MaxPooling2D(),
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dropout(0.5),  # 50% dropout during training
-    tf.keras.layers.Dense(2, activation='softmax')
+  tf.keras.layers.Conv2D(32, 3, activation='relu', input_shape=(32, 32, 3)),
+  tf.keras.layers.MaxPooling2D(),
+  tf.keras.layers.Flatten(),
+  tf.keras.layers.Dense(128, activation='relu'),
+  tf.keras.layers.Dropout(0.5),  # 50% dropout during training
+  tf.keras.layers.Dense(2, activation='softmax')
 ])
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
@@ -2855,7 +2855,7 @@ model.evaluate(X_test, y_test)  # Dropout off, weights scaled internally
 - Prevents overfitting
 - Reduces co-adaptation
 - Adds robustness  
-  → Especially important for imbalanced datasets (e.g., rare tumors)
+→ Especially important for imbalanced datasets (e.g., rare tumors)
 
 ### 🧪 Inference
 - Scaled full network ensures consistent, accurate predictions without retraining
@@ -2890,17 +2890,17 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Fraction of correct predictions.
 - **Formula**: 
 
-  $$
-  \text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
-  $$
+$$
+\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+$$
 
 - **Example**:  
 
-  TP = 90, TN = 900, FP = 10, FN = 100 
+TP = 90, TN = 900, FP = 10, FN = 100 
 
-  $$
-  \text{Accuracy} = \frac{90 + 900}{90 + 900 + 10 + 100} = 0.9 \ (90\%)
-  $$
+$$
+\text{Accuracy} = \frac{90 + 900}{90 + 900 + 10 + 100} = 0.9 \ (90\%)
+$$
 
 - **Use**: Good for balanced datasets.
 
@@ -2908,16 +2908,16 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Fraction of positive predictions that are correct.
 - **Formula**: 
 
-  $$
-  \text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
-  $$
+$$
+\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+$$
 
 - **Example**:  
-  TP = 90, FP = 10 
+TP = 90, FP = 10 
 
-  $$
-  \text{Precision} = \frac{90}{90 + 10} = 0.9 \ (90\%)
-  $$
+$$
+\text{Precision} = \frac{90}{90 + 10} = 0.9 \ (90\%)
+$$
 
 - **Use**: Critical when false positives are costly.
 
@@ -2925,16 +2925,16 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Fraction of actual positives correctly identified.
 - **Formula**:
 
-  $$
-  \text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
-  $$
+$$
+\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+$$
 
 - **Example**:  
-  TP = 90, FN = 100  
+TP = 90, FN = 100  
 
-  $$
-  \text{Recall} = \frac{90}{90 + 100} \approx 0.47 \ (47\%)
-  $$
+$$
+\text{Recall} = \frac{90}{90 + 100} \approx 0.47 \ (47\%)
+$$
 
 - **Use**: Key for rare defect detection.
 
@@ -2942,16 +2942,16 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Harmonic mean of precision and recall.
 - **Formula**:  
 
-  $$
-  \text{F1} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
-  $$
+$$
+\text{F1} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+$$
 
 - **Example**:  
-  Precision = 0.9, Recall = 0.47 
+Precision = 0.9, Recall = 0.47 
 
-  $$
-  \text{F1} \approx 0.62
-  $$
+$$
+\text{F1} \approx 0.62
+$$
 
 - **Use**: Balances precision/recall trade-off.
 
@@ -2970,59 +2970,59 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Average squared difference between predicted and true values.
 - **Formula**:  
 
-  $$
-  \text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
-  $$
+$$
+\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+$$
 
 - **Example**: 
 
-  $$
-  y = [10, 20], \hat{y} = [12, 19] \Rightarrow \text{MSE} = \frac{4 + 1}{2} = 2.5
-  $$
+$$
+y = [10, 20], \hat{y} = [12, 19] \Rightarrow \text{MSE} = \frac{4 + 1}{2} = 2.5
+$$
 
 
 ### 🔹 Mean Absolute Error (MAE)
 - **Definition**: Average absolute difference.
 - **Formula**: 
 
-  $$
-  \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
-  $$
+$$
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+$$
 
 - **Example**:  
-  $$
-  \text{MAE} = \frac{2 + 1}{2} = 1.5
-  $$
+$$
+\text{MAE} = \frac{2 + 1}{2} = 1.5
+$$
 
 
 ### 🔹 Root Mean Squared Error (RMSE)
 - **Definition**: Square root of MSE.
 - **Formula**:  
 
-  $$
-  \text{RMSE} = \sqrt{\text{MSE}}
-  $$
+$$
+\text{RMSE} = \sqrt{\text{MSE}}
+$$
 
 - **Example**:  
 
-  $$
-  \text{RMSE} = \sqrt{2.5} \approx 1.58
-  $$
+$$
+\text{RMSE} = \sqrt{2.5} \approx 1.58
+$$
 
 
 ### 🔹 R² (Coefficient of Determination)
 - **Definition**: Proportion of variance explained by the model.
 - **Formula**: 
 
-  $$
-  R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}
-  $$
+$$
+R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}
+$$
 
 - **Example**: 
 
-  $$
-  R^2 = 0.9 \Rightarrow 90\% \text{ variance explained}
-  $$
+$$
+R^2 = 0.9 \Rightarrow 90\% \text{ variance explained}
+$$
 
 
 ---
@@ -3035,9 +3035,9 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Overlap between predicted and ground truth boxes.
 - **Formula**:  
 
-  $$
-  \text{IoU} = \frac{\text{Area of Intersection}}{\text{Area of Union}}
-  $$
+$$
+\text{IoU} = \frac{\text{Area of Intersection}}{\text{Area of Union}}
+$$
 
 - **Example**: IoU ≈ 0.81
 
@@ -3045,9 +3045,9 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: TP if IoU > threshold (e.g., 0.5), else FP.
 - **Example**:  
 
-  $$
-  \text{Precision} = \frac{4}{5} = 0.8, \quad \text{Recall} = \frac{4}{6} \approx 0.67
-  $$
+$$
+\text{Precision} = \frac{4}{5} = 0.8, \quad \text{Recall} = \frac{4}{6} \approx 0.67
+$$
 
 
 ### 🔹 Average Precision (AP)
@@ -3068,45 +3068,45 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 - **Definition**: Fraction of correctly classified pixels.
 - **Formula**:  
 
-  $$
-  \text{Accuracy} = \frac{\text{Correct Pixels}}{\text{Total Pixels}}
-  $$
+$$
+\text{Accuracy} = \frac{\text{Correct Pixels}}{\text{Total Pixels}}
+$$
 
 
 ### 🔹 Intersection over Union (IoU)
 - **Formula**:  
 
-  $$
-  \text{IoU} = \frac{\text{TP}}{\text{TP} + \text{FP} + \text{FN}}
-  $$
+$$
+\text{IoU} = \frac{\text{TP}}{\text{TP} + \text{FP} + \text{FN}}
+$$
 
 - **Example**:  
 
-  $$
-  \text{IoU} = \frac{50}{50 + 10 + 20} = 0.625
-  $$
+$$
+\text{IoU} = \frac{50}{50 + 10 + 20} = 0.625
+$$
 
 
 ### 🔹 Dice Coefficient
 - **Formula**:  
 
-  $$
-  \text{Dice} = \frac{2 \cdot \text{TP}}{2 \cdot \text{TP} + \text{FP} + \text{FN}}
-  $$
+$$
+\text{Dice} = \frac{2 \cdot \text{TP}}{2 \cdot \text{TP} + \text{FP} + \text{FN}}
+$$
 
 - **Example**:  
-  $$
-  \text{Dice} = \frac{2 \cdot 50}{2 \cdot 50 + 10 + 20} \approx 0.77
-  $$
+$$
+\text{Dice} = \frac{2 \cdot 50}{2 \cdot 50 + 10 + 20} \approx 0.77
+$$
 
 
 ### 🔹 Mean IoU (mIoU)
 - **Definition**: Average IoU across all classes.
 - **Example**:  
 
-  $$
-  \text{mIoU} = \frac{0.625 + 0.95}{2} = 0.7875
-  $$
+$$
+\text{mIoU} = \frac{0.625 + 0.95}{2} = 0.7875
+$$
 
 
 ---
@@ -3148,20 +3148,20 @@ With skip layers, the flow includes shortcuts:
 
 **Mechanics**:
 - **Forward Pass**:
-  - Compute ( F(x) ) (e.g., two conv layers with ReLU).
-  - Add the original input ( x ) (or a transformed ( x ), if dimensions differ).
-  - Result: y = F(x) + x, passed to the next layer.
+- Compute ( F(x) ) (e.g., two conv layers with ReLU).
+- Add the original input ( x ) (or a transformed ( x ), if dimensions differ).
+- Result: y = F(x) + x, passed to the next layer.
 
 - **Backward Pass (Backpropagation)**:
-  - Gradients flow through both the skip path and the main path.
-  - Gradient of loss w.r.t. ( x ):  
+- Gradients flow through both the skip path and the main path.
+- Gradient of loss w.r.t. ( x ):  
 
+$$
+  \frac{\partial L}{\partial x} = \frac{\partial L}{\partial y} \cdot (1 + \frac{\partial F(x)}{\partial x}).
   $$
-    \frac{\partial L}{\partial x} = \frac{\partial L}{\partial y} \cdot (1 + \frac{\partial F(x)}{\partial x}).
-    $$
 
-  - The “1” from the skip path ensures gradients don’t vanish, even if $
-  \frac{\partial F(x)}{\partial x}$ is small.
+- The “1” from the skip path ensures gradients don’t vanish, even if $
+\frac{\partial F(x)}{\partial x}$ is small.
 
 **Dimension Matching**:
 - If ( x ) and ( F(x) ) have different shapes (e.g., due to conv strides), ( x ) is adjusted (e.g., via 1x1 convolution or pooling) to match.
@@ -3173,13 +3173,13 @@ With skip layers, the flow includes shortcuts:
 Imagine a 3-layer CNN classifying defects:
 
 - **Without Skip**:
-  - Input → Conv1 (edges) → Conv2 (shapes) → Dense → Output.
-  - Deep layers might lose early edge info due to vanishing gradients.
+- Input → Conv1 (edges) → Conv2 (shapes) → Dense → Output.
+- Deep layers might lose early edge info due to vanishing gradients.
 
 - **With Skip**:
-  - Input ( x ) → Conv1 → Conv2 → Add ( x ) → Dense → Output.
-  - F(x) = $\text{Conv2}(\text{Conv1}(x)), y = F(x) + x$
-  - Early edge features bypass Conv1/Conv2, directly aiding the output.
+- Input ( x ) → Conv1 → Conv2 → Add ( x ) → Dense → Output.
+- F(x) = $\text{Conv2}(\text{Conv1}(x)), y = F(x) + x$
+- Early edge features bypass Conv1/Conv2, directly aiding the output.
 
 **Numbers**:
 - x = [1, 2, 3] (simplified feature map).
@@ -3192,53 +3192,53 @@ Imagine a 3-layer CNN classifying defects:
 Skip connections address key challenges in deep networks, making them invaluable in your CNN projects:
 
 - **Mitigate Vanishing Gradients**
-  - **Problem**: In deep CNNs (e.g., 50 layers), gradients shrink (e.g., from -0.428 to -0.006), stalling early layer learning.
-  - **Solution**: Skip paths provide a direct gradient route $(\frac{\partial L}{\partial x} \geq \frac{\partial L}{\partial y})$, ensuring early layers update.
-  - **Example**: In your 50-layer segmentation CNN, skip layers keep edge detectors active, dropping loss from 0.8 to 0.3.
+- **Problem**: In deep CNNs (e.g., 50 layers), gradients shrink (e.g., from -0.428 to -0.006), stalling early layer learning.
+- **Solution**: Skip paths provide a direct gradient route $(\frac{\partial L}{\partial x} \geq \frac{\partial L}{\partial y})$, ensuring early layers update.
+- **Example**: In your 50-layer segmentation CNN, skip layers keep edge detectors active, dropping loss from 0.8 to 0.3.
 
 - **Enable Deeper Networks**
-  - **Why**: Without skips, adding layers often degrades performance due to optimization issues.
-  - **Benefit**: ResNet with 152 layers outperforms shallower nets—skip connections make depth feasible.
-  - **Your Work**: Deeper CNNs for defect detection capture complex patterns (e.g., subtle cracks).
+- **Why**: Without skips, adding layers often degrades performance due to optimization issues.
+- **Benefit**: ResNet with 152 layers outperforms shallower nets—skip connections make depth feasible.
+- **Your Work**: Deeper CNNs for defect detection capture complex patterns (e.g., subtle cracks).
 
 - **Learn Residuals**
-  - **Concept**: Instead of learning ( H(x) ) (direct mapping), the network learns F(x) = H(x) - x (residual), which is often easier.
-  - **Example**: If ( H(x) ) is close to ( x ) (identity), F(x) \approx 0, simplifying training.
-  - **Use**: In object detection, residuals refine box predictions incrementally.
+- **Concept**: Instead of learning ( H(x) ) (direct mapping), the network learns F(x) = H(x) - x (residual), which is often easier.
+- **Example**: If ( H(x) ) is close to ( x ) (identity), F(x) \approx 0, simplifying training.
+- **Use**: In object detection, residuals refine box predictions incrementally.
 
 - **Preserve Information**
-  - **Why**: Early features (e.g., edges) get diluted in deep layers.
-  - **Benefit**: Skip layers retain them, aiding tasks needing multi-scale info.
-  - **Example**: In U-Net (segmentation), skips combine low-level (edges) and high-level (context) features.
+- **Why**: Early features (e.g., edges) get diluted in deep layers.
+- **Benefit**: Skip layers retain them, aiding tasks needing multi-scale info.
+- **Example**: In U-Net (segmentation), skips combine low-level (edges) and high-level (context) features.
 
 ---
 
 # Types of Skip Connections
 
 - **Identity Skip (ResNet)**:
-  - y = F(x) + x, no transformation on ( x ).
-  - **Use**: Deep CNNs for classification/detection.
+- y = F(x) + x, no transformation on ( x ).
+- **Use**: Deep CNNs for classification/detection.
 
 - **Transformed Skip**:
-  - y = F(x) + T(x), where ( T(x) ) adjusts ( x ) (e.g., 1x1 conv).
-  - **Use**: When layer dimensions differ (e.g., stride > 1).
+- y = F(x) + T(x), where ( T(x) ) adjusts ( x ) (e.g., 1x1 conv).
+- **Use**: When layer dimensions differ (e.g., stride > 1).
 
 - **Concatenation (DenseNet/U-Net)**:
-  - y = [F(x), x] (stack features instead of adding).
-  - **Use**: Segmentation, preserving all features.
+- y = [F(x), x] (stack features instead of adding).
+- **Use**: Segmentation, preserving all features.
 
 ---
 
 # Practical Use in Your Projects
 
 - **Defect Detection (Classification)**:
-  - ResNet with skips ensures deep layers learn without overfitting, boosting test accuracy (e.g., 85% vs. 70%).
+- ResNet with skips ensures deep layers learn without overfitting, boosting test accuracy (e.g., 85% vs. 70%).
 
 - **Object Detection (YOLO)**:
-  - Skips in backbone (e.g., ResNet) refine boxes, improving mAP (e.g., 0.82).
+- Skips in backbone (e.g., ResNet) refine boxes, improving mAP (e.g., 0.82).
 
 - **Segmentation (U-Net)**:
-  - Skips from encoder to decoder combine edges and context, raising Dice score (e.g., 0.77 vs. 0.60).
+- Skips from encoder to decoder combine edges and context, raising Dice score (e.g., 0.77 vs. 0.60).
 
 - **Training**: Faster convergence (e.g., 20 vs. 50 epochs) due to better gradient flow.
 
@@ -3279,32 +3279,32 @@ y = F(x) + x
 as seen in **ResNet**. These connections help:
 
 - **Mitigate vanishing gradients**:  
-  They ensure gradients flow back effectively, e.g.,  
-  $
-  \frac{\partial L}{\partial x} \geq 1
-  $  
-  In my segmentation work, skip layers in **U-Net** preserved edge features, reducing loss from **0.8 to 0.3** and boosting Dice score from **0.60 to 0.77**.
+They ensure gradients flow back effectively, e.g.,  
+$
+\frac{\partial L}{\partial x} \geq 1
+$  
+In my segmentation work, skip layers in **U-Net** preserved edge features, reducing loss from **0.8 to 0.3** and boosting Dice score from **0.60 to 0.77**.
 
 - **Enable deeper CNNs**:  
-  Without skips, deeper networks (e.g., 152 layers) suffer from optimization issues. With skips, they train effectively.  
-  In my defect detection models, deeper ResNets captured subtle patterns like micro-cracks, improving test accuracy from **70% to 85%**.
+Without skips, deeper networks (e.g., 152 layers) suffer from optimization issues. With skips, they train effectively.  
+In my defect detection models, deeper ResNets captured subtle patterns like micro-cracks, improving test accuracy from **70% to 85%**.
 
 - **Learn residuals**:  
-  Instead of learning a full mapping \( H(x) \), the network learns a residual \( F(x) = H(x) - x \), which is often easier.  
-  In object detection, this helped refine bounding boxes, improving **mAP to 0.82**.
+Instead of learning a full mapping \( H(x) \), the network learns a residual \( F(x) = H(x) - x \), which is often easier.  
+In object detection, this helped refine bounding boxes, improving **mAP to 0.82**.
 
 - **Preserve information**:  
-  Early features like edges are retained and combined with deeper context.  
-  In U-Net, this multi-scale fusion improved segmentation quality significantly.
+Early features like edges are retained and combined with deeper context.  
+In U-Net, this multi-scale fusion improved segmentation quality significantly.
 
 ---
 
 ## Recap: Overfitting and Underfitting
 - **Overfitting**:  
-  Model memorizes training data (e.g., 98% train, 60% test accuracy).
+Model memorizes training data (e.g., 98% train, 60% test accuracy).
 
 - **Underfitting**:  
-  Model is too simple or undertrained (e.g., 50% train, 55% test accuracy).
+Model is too simple or undertrained (e.g., 50% train, 55% test accuracy).
 
 ---
 
@@ -3328,15 +3328,15 @@ They **indirectly** influence overfitting and underfitting by improving optimiza
 - **How**: Skips allow deep networks to train effectively, avoiding optimization failure.
 - **Impact**: Deeper models learn abstract features, reducing overfitting to noise.
 - **Example**:  
-  - 20-layer CNN (no skips): test accuracy = 65%  
-  - 50-layer ResNet (with skips): test accuracy = 85%
+- 20-layer CNN (no skips): test accuracy = 65%  
+- 50-layer ResNet (with skips): test accuracy = 85%
 
 ### 2. Residual Learning Simplifies Optimization
 - **How**: Learning \( F(x) = H(x) - x \) is easier than learning \( H(x) \) directly.
 - **Impact**: Focuses on meaningful differences, avoids memorizing noise.
 - **Example**:  
-  - Without skips: model overfits to pixel-level noise in 90% "no defect" images  
-  - With skips: model learns residual cues, improving generalization
+- Without skips: model overfits to pixel-level noise in 90% "no defect" images  
+- With skips: model learns residual cues, improving generalization
 
 ### 3. Indirect Regularization Effect (Mild)
 - **How**: Preserving early features reduces pressure on deeper layers.
@@ -3359,11 +3359,11 @@ Skip layers don’t inherently prevent overfitting. A deep ResNet can still over
 
 - **Task**: Classify 10,000 X-rays (90% no defect)
 - **Without Skips**:  
-  - 20-layer CNN  
-  - Train: 98%, Test: 70% → Overfitting
+- 20-layer CNN  
+- Train: 98%, Test: 70% → Overfitting
 - **With Skips (ResNet-50)**:  
-  - Train: 95%, Test: 85% → Better generalization  
-  - With Dropout: Test improves to 90%
+- Train: 95%, Test: 85% → Better generalization  
+- With Dropout: Test improves to 90%
 
 
 ## Q: Do Skip Layers Help with Underfitting?
@@ -3376,14 +3376,14 @@ Skip layers are especially effective in reducing **underfitting** in deep neural
 
 ### 🔁 Combat Vanishing Gradients
 - **How**: Skip connections ensure gradients reach early layers:
-  $[
-  \frac{\partial L}{\partial x} \geq 1
-  ]$
+$[
+\frac{\partial L}{\partial x} \geq 1
+]$
 - **Impact**: Prevents early layers from staying static.
 - **Example**:  
-  In your 50-layer segmentation CNN:  
-  - Without skips: loss stalls at **0.8** (underfit)  
-  - With skips: loss drops to **0.3**, capturing tumor edges
+In your 50-layer segmentation CNN:  
+- Without skips: loss stalls at **0.8** (underfit)  
+- With skips: loss drops to **0.3**, capturing tumor edges
 
 ---
 
@@ -3391,8 +3391,8 @@ Skip layers are especially effective in reducing **underfitting** in deep neural
 - **How**: Skips allow stacking more layers (e.g., 100 vs. 20) without degradation.
 - **Impact**: Increases model capacity to learn complex patterns.
 - **Example**:  
-  - 5-layer CNN: underfits with **60% accuracy**  
-  - ResNet-50 with skips: fits better with **90% accuracy**, learning hierarchical features
+- 5-layer CNN: underfits with **60% accuracy**  
+- ResNet-50 with skips: fits better with **90% accuracy**, learning hierarchical features
 
 ---
 
@@ -3400,9 +3400,9 @@ Skip layers are especially effective in reducing **underfitting** in deep neural
 - **How**: Early features (e.g., edges) are passed directly to later layers.
 - **Impact**: Prevents loss of low-level information in deep sequential nets.
 - **Example**:  
-  In U-Net for tumor segmentation:  
-  - Without skips: Dice score = **0.60** (underfit)  
-  - With skips: Dice score = **0.77**, combining edge and context features
+In U-Net for tumor segmentation:  
+- Without skips: Dice score = **0.60** (underfit)  
+- With skips: Dice score = **0.77**, combining edge and context features
 
 ---
 
@@ -3416,10 +3416,10 @@ Skip layers are most effective when:
 ### 🧪 Your Work Example
 - **Task**: Tumor segmentation on 10,000 images
 - **Without Skips**:  
-  - 10-layer CNN  
-  - Dice score = **0.60** → underfits complex boundaries
+- 10-layer CNN  
+- Dice score = **0.60** → underfits complex boundaries
 - **With Skips (U-Net)**:  
-  - Dice score = **0.77** → captures fine details, reduces underfitting
+- Dice score = **0.77** → captures fine details, reduces underfitting
 
 
 ## Overfitting vs. Underfitting: Net Effect of Skip Layers
@@ -3432,16 +3432,16 @@ Skip layers are most effective when:
 ### 📉 Underfitting
 - **Effect**: Skip layers **directly** reduce underfitting.
 - **How They Help**:
-  - Improve gradient flow (e.g., $(\frac{\partial L}{\partial x} \geq 1)$)
-  - Enable deeper, more expressive models
-  - Preserve early-layer information (e.g., edges)
+- Improve gradient flow (e.g., $(\frac{\partial L}{\partial x} \geq 1)$)
+- Enable deeper, more expressive models
+- Preserve early-layer information (e.g., edges)
 
 ---
 
 ### 🎨 Visual Analogy
 - **Loss Landscape**:  
-  Skip layers help the model traverse rugged terrain (avoiding cliffs of underfitting),  
-  but don’t stop it from settling in a narrow valley (overfitting) unless guided by regularization.
+Skip layers help the model traverse rugged terrain (avoiding cliffs of underfitting),  
+but don’t stop it from settling in a narrow valley (overfitting) unless guided by regularization.
 
 ---
 
@@ -3449,18 +3449,18 @@ Skip layers are most effective when:
 
 ### 🔍 Defect Detection
 - **20-layer CNN**:  
-  - Train: 98%, Test: 65% → Overfits  
-  - Gradients vanish in early layers
+- Train: 98%, Test: 65% → Overfits  
+- Gradients vanish in early layers
 - **ResNet-50 with Skips**:  
-  - Train: 95%, Test: 85%  
-  - Better gradient flow reduces underfitting  
-  - Add dropout → Test improves to 90%
+- Train: 95%, Test: 85%  
+- Better gradient flow reduces underfitting  
+- Add dropout → Test improves to 90%
 
 ### 🧠 Segmentation
 - **Plain CNN**:  
-  - Dice score = 0.60 → Underfits, misses tumor edges
+- Dice score = 0.60 → Underfits, misses tumor edges
 - **U-Net with Skips**:  
-  - Dice score = 0.77 → Captures multi-scale features, reduces underfitting
+- Dice score = 0.77 → Captures multi-scale features, reduces underfitting
 
 ---
 
