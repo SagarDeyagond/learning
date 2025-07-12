@@ -2327,8 +2327,9 @@ $$
 - **Update**: 
 
 $$
-E[G^2]_t = \rho E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
-$$ 
+E[G^2]_t = \rho\, E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
+$$
+
 
 
 
