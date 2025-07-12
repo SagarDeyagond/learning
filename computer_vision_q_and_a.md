@@ -1323,7 +1323,7 @@ $$
 ---
 
 ### 📌 Regression (MSE)
-- \( y = 10 \), \( \hat{y} = 12 \)
+-  $y = 10$ ,  $\hat{y} = 12$
 - **Loss**: 
 
 $$
@@ -2914,7 +2914,7 @@ model.evaluate(X_test, y_test)  # Dropout off, weights scaled internally
 For example, in a defect CNN, it boosts test accuracy from 65% to 85% by forcing robust feature learning instead of memorizing training quirks.  
 It’s like training an ensemble of sub-networks.  
 
-In inference, dropout’s off — all neurons are used, with weights scaled (e.g., \( w \cdot 0.5 \)) to match training’s expected output.  
+In inference, dropout’s off — all neurons are used, with weights scaled e.g., $( w \cdot 0.5 )$ to match training’s expected output.  
 In my segmentation work, dropout after dense layers cut overfitting, ensuring reliable tumor detection on unseen data.
 
 
@@ -3231,24 +3231,24 @@ Imagine a 3-layer CNN classifying defects:
 Skip connections address key challenges in deep networks, making them invaluable in your CNN projects:
 
 - **Mitigate Vanishing Gradients**
-- **Problem**: In deep CNNs (e.g., 50 layers), gradients shrink (e.g., from -0.428 to -0.006), stalling early layer learning.
-- **Solution**: Skip paths provide a direct gradient route $(\frac{\partial L}{\partial x} \geq \frac{\partial L}{\partial y})$, ensuring early layers update.
-- **Example**: In your 50-layer segmentation CNN, skip layers keep edge detectors active, dropping loss from 0.8 to 0.3.
+    - **Problem**: In deep CNNs (e.g., 50 layers), gradients shrink (e.g., from -0.428 to -0.006), stalling early layer learning.
+    - **Solution**: Skip paths provide a direct gradient route $(\frac{\partial L}{\partial x} \geq \frac{\partial L}{\partial y})$, ensuring early layers update.
+    - **Example**: In your 50-layer segmentation CNN, skip layers keep edge detectors active, dropping loss from 0.8 to 0.3.
 
 - **Enable Deeper Networks**
-- **Why**: Without skips, adding layers often degrades performance due to optimization issues.
-- **Benefit**: ResNet with 152 layers outperforms shallower nets—skip connections make depth feasible.
-- **Your Work**: Deeper CNNs for defect detection capture complex patterns (e.g., subtle cracks).
+    - **Why**: Without skips, adding layers often degrades performance due to optimization issues.
+    - **Benefit**: ResNet with 152 layers outperforms shallower nets—skip connections make depth feasible.
+    - **Your Work**: Deeper CNNs for defect detection capture complex patterns (e.g., subtle cracks).
 
 - **Learn Residuals**
-- **Concept**: Instead of learning ( H(x) ) (direct mapping), the network learns F(x) = H(x) - x (residual), which is often easier.
-- **Example**: If ( H(x) ) is close to ( x ) (identity), F(x) \approx 0, simplifying training.
-- **Use**: In object detection, residuals refine box predictions incrementally.
+    - **Concept**: Instead of learning ( H(x) ) (direct mapping), the network learns F(x) = H(x) - x (residual), which is often easier.
+    - **Example**: If ( H(x) ) is close to ( x ) (identity), F(x) $\approx$ 0, simplifying training.
+    - **Use**: In object detection, residuals refine box predictions incrementally.
 
 - **Preserve Information**
-- **Why**: Early features (e.g., edges) get diluted in deep layers.
-- **Benefit**: Skip layers retain them, aiding tasks needing multi-scale info.
-- **Example**: In U-Net (segmentation), skips combine low-level (edges) and high-level (context) features.
+    - **Why**: Early features (e.g., edges) get diluted in deep layers.
+    - **Benefit**: Skip layers retain them, aiding tasks needing multi-scale info.
+    - **Example**: In U-Net (segmentation), skips combine low-level (edges) and high-level (context) features.
 
 ---
 
