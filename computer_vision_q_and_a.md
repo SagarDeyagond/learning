@@ -504,35 +504,59 @@ Class weights are typically calculated as the inverse of class frequency (or a n
 
 ### 📊 Calculate Class Frequencies
 
-- Cat (class 0): 900 samples  
-  $$ \text{frequency} = \frac{900}{1000} = 0.9 $$
+- Cat (class 0): 900 samples 
+
+  $$ 
+  \text{frequency} = \frac{900}{1000} = 0.9 
+  $$
+
 - Dog (class 1): 100 samples  
-  $$ \text{frequency} = \frac{100}{1000} = 0.1 $$
+
+  $$ 
+  \text{frequency} = \frac{100}{1000} = 0.1 
+  $$
+
 
 ### 🧮 Compute Class Weights
 
 A common method is "balanced" weighting:  
-$$ \text{weight}_c = \frac{\text{total samples}}{\text{samples in class } c} $$
 
-- Cat (class 0):  
-  $$ \text{weight}_0 = \frac{1000}{900} \approx 1.11 $$
+$$ 
+\text{weight}_c = \frac{\text{total samples}}{\text{samples in class } c} 
+$$
+
+
+- Cat (class 0): 
+
+  $$ 
+  \text{weight}_0 = \frac{1000}{900} \approx 1.11 
+  $$
+
 - Dog (class 1):  
-  $$ \text{weight}_1 = \frac{1000}{100} = 10 $$
+
+  $$ 
+  \text{weight}_1 = \frac{1000}{100} = 10 
+  $$
+
 
 **Interpretation**: Misclassifying a dog costs 10× more than misclassifying a cat.
 
 ### 🧠 Apply to Loss Function
 
-- **Standard cross-entropy loss** for a single sample:  
+- **Standard cross-entropy loss** for a single sample: 
+
   $$
   \text{Loss} = -\sum_{c=0}^{C-1} y_c \log(p_c)
   $$
+
   where \( $y_c$ \) is the true label (1 if correct class, 0 otherwise), and \( $p_c \) is the predicted probability.
 
 - **Weighted cross-entropy**:  
+
   $$
   \text{Weighted Loss} = -\sum_{c=0}^{C-1} w_c \, y_c \log(p_c)
   $$
+
   where \( $w_c$ \) is the class weight.
 
 ## 📐 Math in Action
@@ -541,20 +565,26 @@ Let’s compute the loss for two samples—one cat, one dog—with and without w
 
 ### 🔹 Without Class Weights ( \( w_0 = 1, w_1 = 1 \) )
 
-- **Sample 1**: True = Cat (0), Predicted = [0.9, 0.1]  
+- **Sample 1**: True = Cat (0), Predicted = [0.9, 0.1] 
+
   $$
   \text{Loss} = -[1 \cdot \log(0.9) + 0 \cdot \log(0.1)] = -\log(0.9) \approx 0.105
   $$
 
+
 - **Sample 2**: True = Dog (1), Predicted = [0.8, 0.2]  
+
   $$
   \text{Loss} = -[0 \cdot \log(0.8) + 1 \cdot \log(0.2)] = -\log(0.2) \approx 1.609
   $$
 
+
 - **Average Loss**:  
+
   $$
   \frac{0.105 + 1.609}{2} = 0.857
   $$
+
 
 **Observation**: The dog error contributes more, but with 900 cats vs. 100 dogs, the total loss is dominated by cat predictions.
 
@@ -562,20 +592,26 @@ Let’s compute the loss for two samples—one cat, one dog—with and without w
 
 ### 🔸 With Class Weights ( \( w_0 = 1.11, w_1 = 10 \) )
 
-- **Sample 1**: True = Cat (0), Predicted = [0.9, 0.1]  
+- **Sample 1**: True = Cat (0), Predicted = [0.9, 0.1]
+
   $$
   \text{Weighted Loss} = -[1.11 \cdot 1 \cdot \log(0.9) + 0 \cdot 10 \cdot \log(0.1)] = 1.11 \cdot 0.105 \approx 0.117
   $$
 
+
 - **Sample 2**: True = Dog (1), Predicted = [0.8, 0.2]  
+
   $$
   \text{Weighted Loss} = -[1.11 \cdot 0 \cdot \log(0.8) + 10 \cdot 1 \cdot \log(0.2)] = 10 \cdot 1.609 \approx 16.09
   $$
 
+
 - **Average Loss**:  
+
   $$
   \frac{0.117 + 16.09}{2} = 8.103
   $$
+
 
 **Observation**: The dog error now dominates the loss (16.09 vs. 0.117), pushing the model to improve dog predictions.
 
@@ -652,9 +688,12 @@ Feedforward is the process of passing input data through a neural network, layer
   Output: \([0.7, 0.3]\) → 70% cat, 30% dog
 
 - **Math**:  
+
   $$
   z = w \cdot x + b, \quad a = \text{ReLU}(z)
   $$
+
+
   where \( w \) is weight, \( x \) is input, and \( b \) is bias.
 
 ### ✅ Need for Feedforward:
@@ -673,29 +712,37 @@ Backpropagation (backward propagation of errors) is the process of calculating t
 - **Compute Loss**: Compare the feedforward output to the true label (e.g., cross-entropy loss).
 - **Gradient Calculation**: Use the chain rule to compute how much each weight contributed to the error, starting from the output layer and moving back to the input.
 - **Weight Update**: Adjust weights using an optimizer (e.g., gradient descent):  
+
   $$
   w = w - \eta \cdot \frac{\partial L}{\partial w}
   $$
+
   where \( $\eta$ \) is the learning rate.
 
 ### 🧪 Simple Example:
 
 - **Feedforward Output**: \([0.7, 0.3]\), True Label: \([1, 0]\) (cat)
-- **Loss**:  
+- **Loss**: 
+
   $$
   L = -\sum y_i \log(p_i) = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] \approx 0.357
   $$
 
+
 - **Backpropagation**:
   - Output layer gradient:  
+
     $$
     \frac{\partial L}{\partial p} = p - y = [0.7 - 1, 0.3 - 0] = [-0.3, 0.3]
     $$
+
   - Propagate back: Adjust dense layer weights, then pooling, then conv filters using the chain rule.
   - Update:  
+
     $$
     w_{\text{new}} = w_{\text{old}} - 0.01 \cdot \text{gradient} \quad (\text{assuming } \eta = 0.01)
     $$
+
 
 ### ✅ Need for Backpropagation:
 
@@ -719,21 +766,27 @@ Without this cycle, your CNN wouldn’t adapt to the dataset.
 
 ## 🧮 Math Intuition
 
-- **Feedforward**:  
+- **Feedforward**: 
+
   $$
   y = f(W_2 \cdot f(W_1 \cdot x + b_1) + b_2)
   $$
+
   where \( f \) is an activation function (e.g., ReLU)
 
 - **Loss**:  
+
   $$
   L = \text{loss}(y, y_{\text{true}})
   $$
 
-- **Backpropagation**:  
+
+- **Backpropagation**:
+
   $$
   \frac{\partial L}{\partial W_1} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W_1}
   $$  
+
   (computed layer by layer using the chain rule)
 
 ---
@@ -770,22 +823,28 @@ In my tumor detection work, feedforward scored tumor likelihood, and backprop re
 **Common Loss**: Cross-Entropy Loss
 
 - **Formula (Single Sample)**:
+
   $$
   L = -\sum_{c=1}^{C} y_c \log(p_c)
   $$
+
   where \( $y_c = 1$ \) if class \( $c$ \) is true, \( $p_c$ \) is the predicted probability, and \( $C$ \) is the number of classes.
 
 - **Cost Function**:
+
   $$
   J = \frac{1}{N} \sum_{i=1}^{N} L_i
   $$
 
+
 **Example**:
 - True Label: "Dog" → one-hot: \([0, 1]\), Prediction: \([0.3, 0.7]\)
 - Loss:  
+
   $$
   L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357
   $$
+
 
 **Why Used**: Penalizes confident wrong predictions more (e.g., $\log(0.1)$ is a larger penalty than $\log(0.7)$).
 
@@ -797,26 +856,34 @@ In my tumor detection work, feedforward scored tumor likelihood, and backprop re
 **Common Loss**: Mean Squared Error (MSE)
 
 - **Formula (Single Sample)**:
+
   $$
   L = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
   $$
 
+
 - **Cost Function**:
+
   $$
   J = \frac{1}{N} \sum_{i=1}^{N} L_i
   $$
 
+
 **Example**:
 - True: \([10, 20]\), Predicted: \([12, 19]\)
 - Loss:  
+
   $$
   L = \frac{1}{2} [(10 - 12)^2 + (20 - 19)^2] = \frac{1}{2} [4 + 1] = 2.5
   $$
 
+
 **Alternative**: Mean Absolute Error (MAE):  
+
 $$
 L = \frac{1}{n} \sum |y_i - \hat{y}_i|
 $$
+
 
 ---
 
@@ -831,9 +898,11 @@ $$
   - Classification Loss (Cross-Entropy)
 
 - **Simplified YOLO Formula**:
+
   $$
   L = \lambda_{\text{coord}} \sum (x_i - \hat{x}_i)^2 + \sum \text{BCE}(obj_i, \hat{obj}_i) + \sum \text{CE}(c_i, \hat{c}_i)
   $$
+
 
 **Example**:
 - True Box: \([50, 50, 10, 10]\), Predicted: \([52, 51, 11, 9]\)
@@ -841,9 +910,11 @@ $$
 - Objectness: \( $-\log(0.8) \approx 0.223$ \)
 - Class: \( $-\log(0.9) \approx 0.105$ \)
 - Total Loss:  
+
   $$
   5 \cdot 7 + 0.223 + 0.105 = 35.328 \quad (\lambda_{\text{coord}} = 5)
   $$
+
 
 ---
 
@@ -853,21 +924,28 @@ $$
 **Common Loss**: Pixel-wise Cross-Entropy or Dice Loss
 
 - **Cross-Entropy (Per Pixel)**:
+
   $$
   L = -\frac{1}{H \cdot W} \sum_{h,w} \sum_{c} y_{h,w,c} \log(p_{h,w,c})
   $$
 
+
 - **Dice Loss**:
+
   $$
   L = 1 - \frac{2 \cdot |y \cap \hat{y}|}{|y| + |\hat{y}|}
   $$
 
+
 **Example**:
+
 - Image: 4×4 pixels, 4 tumor pixels (1), 12 background (0)
-- Dice Loss:  
+- Dice Loss:
+
   $$
   1 - \frac{2 \cdot 4}{4 + 5} = 1 - \frac{8}{9} \approx 0.11
   $$
+
 
 **Why Dice?** Better for imbalanced classes (e.g., small tumors).
 
@@ -890,16 +968,20 @@ $$
 **A**: A **loss function** measures error for one sample, while the **cost function** averages it over the dataset.
 
 - **Classification**: For example, in a cat vs. dog classifier, I use **cross-entropy**.  
-  If the prediction is \([0.7, 0.3]\) for "dog" \([0, 1]\), the loss is:  
+  If the prediction is \([0.7, 0.3]\) for "dog" \([0, 1]\), the loss is: 
+
   $$
   -\log(0.7) \approx 0.357
   $$
 
+
 - **Regression**: For predicting bounding box coordinates, I use **Mean Squared Error (MSE)**.  
-  If the true value is \([10, 20]\) and the prediction is \([12, 19]\), the loss is:  
+  If the true value is \([10, 20]\) and the prediction is \([12, 19]\), the loss is: 
+
   $$
   \frac{1}{2}[(10 - 12)^2 + (20 - 19)^2] = \frac{1}{2}[4 + 1] = 2.5
   $$
+
 
 - **Object Detection**: In **YOLO**, the loss combines:
   - MSE for box coordinates
@@ -911,9 +993,11 @@ $$
   - **Cross-entropy** for general cases
   - **Dice loss** for imbalanced masks  
   Dice loss measures overlap:
+
   $$
   L = 1 - \frac{2 \cdot |y \cap \hat{y}|}{|y| + |\hat{y}|}
   $$
+
 
 These functions drive optimization and are tailored to each task’s needs.
 
@@ -927,9 +1011,11 @@ These functions drive optimization and are tailored to each task’s needs.
 Cross-entropy loss measures the difference between the predicted probability distribution and the true distribution across multiple classes. It’s used for **multi-class classification** problems.
 
 **Formula (Single Sample)**:
+
 $$
 L = -\sum_{c=1}^{C} y_c \log(p_c)
 $$
+
 
 - \( $C$ \): Number of classes (\( $C > 2$ \))
 - \( $y_c$ \): True label (1 if class \( c \) is correct, 0 otherwise; one-hot encoded)
@@ -955,9 +1041,11 @@ Used with **softmax** activation for multi-class problems.
 Binary cross-entropy is a special case of cross-entropy for **binary classification**. It measures the difference between predicted probabilities and true labels when there are only two outcomes (e.g., 0 or 1).
 
 **Formula (Single Sample)**:
+
 $$
 L = -[y \log(p) + (1 - y) \log(1 - p)]
 $$
+
 
 - \( $y$ \): True label (0 or 1)
 - \( $p$ \): Predicted probability of class 1 (between 0 and 1)
@@ -967,9 +1055,11 @@ $$
 - **True Label**: 1 (dog)
 - **Predicted**: 0.7
 - **Loss**:  
+
   $$
   L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7) \approx 0.357
   $$
+
 
 **Key Point**:  
 Used with **sigmoid** activation for binary classification.
@@ -998,20 +1088,26 @@ If \( $C = 2$ \) in cross-entropy (e.g., classes 0 and 1), with:
 Then:
 
 - **Cross-Entropy**:
+
   $$
   L = -[y_0 \log(p_0) + y_1 \log(p_1)]
   $$
 
+
 - For "dog" (class 1):  
-  \( $y = [0, 1]$ \), \( $p = [0.3, 0.7]$ \)  
+  \( $y = [0, 1]$ \), \( $p = [0.3, 0.7]$ \) 
+
   $$
   L = -\log(0.7)
   $$
 
+
 - **Binary Cross-Entropy**:
+
   $$
   L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = -\log(0.7)
   $$
+
 
 ✅ **Result**: Identical for \( $C = 2$ \), but binary cross-entropy simplifies notation.  
 ❗ **Multi-Class Divergence**: For \( $C > 2$ \), cross-entropy sums over all classes, while binary cross-entropy does not extend beyond two.
@@ -1024,18 +1120,22 @@ Then:
 - **Project**: Classifying defects (e.g., "scratch," "dent," "none")
 - **Setup**: CNN with softmax output: $([0.1, 0.6, 0.3])$, true label: $([0, 1, 0])$
 - **Loss**:  
+
   $$
   L = -\log(0.6) \approx 0.51
   $$
+
 - **Use**: Multi-class defect identification
 
 ### 📌 Binary Cross-Entropy
 - **Project**: Detecting presence of a tumor (yes/no)
 - **Setup**: CNN with sigmoid output: 0.8, true label: 1
-- **Loss**:  
+- **Loss**: 
+
   $$
   L = -\log(0.8) \approx 0.223
   $$
+
 - **Use**: Binary decisions, often in object detection confidence scores
 
 ---
@@ -1057,14 +1157,18 @@ Then:
 **Q: What’s the difference between cross-entropy and binary cross-entropy?**  
 **A**: Cross-entropy is for **multi-class classification**, measuring error across $( C > 2 )$ classes with a softmax output.  
 For example, predicting "cat," "dog," or "bird" with $([0.2, 0.7, 0.1])$ vs. $([0, 1, 0])$, the loss is:  
+
 $$
 -\log(0.7)
 $$
 
-Binary cross-entropy is for **two-class problems**, using a sigmoid output for a single probability—like 0.7 vs. 1 for "dog", giving:  
+
+Binary cross-entropy is for **two-class problems**, using a sigmoid output for a single probability—like 0.7 vs. 1 for "dog", giving: 
+
 $$
 -\log(0.7)
 $$
+
 
 The key difference is the number of classes: **cross-entropy sums over all**, while **binary focuses on 0 vs. 1**.  
 In my defect classification, I’d use cross-entropy for multiple types, but binary for presence/absence checks.
@@ -1107,11 +1211,14 @@ In my defect classification, I’d use cross-entropy for multiple types, but bin
 - The loss function compares ground truth \( y \) and prediction \( $\hat{y}$ \) to quantify error.
 
 **Cross-Entropy Loss**:
+
 $$
 L = -\sum_{c} y_c \log(\hat{y}_c)
 $$
 
+
 **Example**:
+
 - $y = [0, 1]$ , $\hat{y} = [0.3, 0.7]$
 - $L = -[0 \cdot \log(0.3) + 1 \cdot \log(0.7)] = -\log(0.7) \approx 0.357$
 
@@ -1125,9 +1232,11 @@ This loss is the "error" we aim to minimize.
 - **Chain Rule**: Compute the gradient of the loss w.r.t. each weight $\frac{\partial L}{\partial w}$
 
 **Output Layer Gradient** (for cross-entropy with softmax):
+
 $$
 \frac{\partial L}{\partial \hat{y}_c} = \hat{y}_c - y_c
 $$
+
 
 **Example**:
 - $\hat{y} = [0.3, 0.7]$, $y = [0, 1]$  
@@ -1140,9 +1249,11 @@ $$
   $\hat{y} = \text{softmax}(z)$
 
 - Gradient:
+
   $$
   \frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w}
   $$
+
 
 - Since $\frac{\partial z}{\partial w} = a$ (activation from previous layer), the gradient depends on \( a \).
 
@@ -1153,11 +1264,14 @@ $$
 - **Optimizer** (e.g., Gradient Descent): Adjust weights to reduce loss.
 
 **Update Rule**:
+
 $$
 w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
 $$
 
+
 **Example**:
+
 - $w = 0.5$, $ a = 1$, $ \frac{\partial L}{\partial w} = -0.3$, $ \eta = 0.1$  
 - $ w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.5 + 0.03 = 0.53$
 
@@ -1178,27 +1292,35 @@ $$
 ### 📌 Classification (Binary Cross-Entropy)
 - \( y = 1 \), \( $\hat{y}$ = 0.7 \)
 - **Loss**:  
+
   $$
   L = -[1 \cdot \log(0.7) + 0 \cdot \log(0.3)] = 0.357
   $$
-- **Gradient**:  
+
+- **Gradient**: 
+
   $$
   \frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1 - \hat{y})} = \frac{0.7 - 1}{0.7 \cdot 0.3} \approx -1.43
   $$
+
 - **Update**: Weights shift to increase $( \hat{y} )$
 
 ---
 
 ### 📌 Regression (MSE)
 - \( y = 10 \), \( \hat{y} = 12 \)
-- **Loss**:  
+- **Loss**: 
+
   $$
   L = (10 - 12)^2 = 4
   $$
+
 - **Gradient**:  
+
   $$
   \frac{\partial L}{\partial \hat{y}} = 2(\hat{y} - y) = 2(12 - 10) = 4
   $$
+
 - **Update**: Weights decrease to pull $( \hat{y} )$ toward 10
 
 ---
@@ -1231,15 +1353,19 @@ $$
 
 **Q: How are ground truth and predictions used in backpropagation?**  
 **A**: Ground truth \( $y$ \) and predictions ( $\hat{y}$ ) calculate the loss, like cross-entropy for classification.  
-For  $y = [0, 1]$  and $\hat{y}$ = $[0.3, 0.7]$ , loss is:  
+For  $y = [0, 1]$  and $\hat{y}$ = $[0.3, 0.7]$ , loss is: 
+
 $$
 -\log(0.7) \approx 0.357
 $$  
+
 Backprop computes gradients from this error—e.g., \( $\hat{y}$ - $y$ = $[0.3, -0.3]$ \) at the output—then propagates back through layers using the chain rule.  
-Weights update via gradient descent:  
+Weights update via gradient descent: 
+
 $$
 w = w - 0.1 \cdot \text{gradient}
 $$  
+
 shifting \( $\hat{y}$ \) closer to \( $y$ \).  
 In my projects, this tunes CNN filters to match ground truth, like defect labels.
 
@@ -1256,14 +1382,18 @@ The loss value is the cornerstone of training—it’s computed after the forwar
 
 **Example**:
 - Ground Truth: \([0, 1]\), Prediction: \([0.3, 0.7]\)  
-- Loss:  
+- Loss: 
+
   $$
   L = -\log(0.7) \approx 0.357
   $$
+
 - Gradient at output:  
+
   $$
   \frac{\partial L}{\partial \hat{y}} = \hat{y} - y = [0.3, -0.3]
   $$
+
 
 This propagates back to adjust convolutional filters or dense layer weights.
 
@@ -1272,17 +1402,21 @@ This propagates back to adjust convolutional filters or dense layer weights.
 ### 🛠️ Weight Updates: Optimization
 
 - **Role**: The loss value, via its gradients, directs the optimizer (e.g., SGD, Adam) to update weights and minimize error.
-- **How**:  
+- **How**: 
+
   $$
   w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
   $$
 
+
 **Example**:
 - Gradient: \(-0.3\), \( $\eta$ = 0.1 \), \( $w_{\text{old}}$ = 0.5 \)  
-- Update:  
+- Update: 
+
   $$
   w_{\text{new}} = 0.5 - 0.1 \cdot (-0.3) = 0.53
   $$
+
 
 **Result**: The model’s prediction shifts closer to the ground truth.
 
@@ -1331,19 +1465,23 @@ This propagates back to adjust convolutional filters or dense layer weights.
 ## 🧪 Examples Across Your Tasks
 
 ### 📌 Classification (Cross-Entropy)
-- **Loss**:  
+- **Loss**: 
+
   $$
   L = -\log(0.7) \approx 0.357 \quad \text{for } \hat{y} = [0.3, 0.7], \, y = [0, 1]
   $$
+
 - **Use**: Gradients adjust the final dense layer to boost \( $p_{\text{dog}}$ \), lowering loss in the next iteration.
 
 ---
 
 ### 📌 Regression (MSE)
 - **Loss**:  
+
   $$
   L = (10 - 12)^2 = 4 \quad \text{for } y = 10, \, \hat{y} = 12
   $$
+
 - **Use**: Gradients push weights to reduce prediction error, aligning \( $\hat{y}$ \) with 10.
 
 ---
@@ -1358,9 +1496,11 @@ This propagates back to adjust convolutional filters or dense layer weights.
 
 ### 📌 Segmentation (Dice Loss)
 - **Loss**:  
+
   $$
   L = 0.11 \quad \text{for mask overlap}
   $$
+
 - **Use**: Gradients refine spatial filters to improve pixel-wise predictions.
 
 ---
@@ -1563,36 +1703,81 @@ L = -\log(0.572) \approx 0.559
 
 ## 🔁 Backpropagation
 
-- **Gradient at Output**:  
-  $$ \frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} = \frac{0.572 - 1}{0.572 \cdot 0.428} \approx -1.747 $$
+- **Gradient at Output**:
 
-- **Gradient w.r.t. \( z_3 \)**:  
-  $$ \frac{\partial L}{\partial z_3} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z_3} $$  
-  where  
-  $$ \frac{\partial \hat{y}}{\partial z_3} = \sigma'(z_3) = \hat{y}(1-\hat{y}) = 0.572 \cdot 0.428 \approx 0.245 $$  
-  $$ \frac{\partial L}{\partial z_3} = -1.747 \cdot 0.245 \approx -0.428 $$
+  $$ 
+  \frac{\partial L}{\partial \hat{y}} = \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} = \frac{0.572 - 1}{0.572 \cdot 0.428} \approx -1.747 
+  $$
 
-- **Gradient w.r.t. \( w_3 \)**:  
-  $$ \frac{\partial L}{\partial w_3} = \frac{\partial L}{\partial z_3} \cdot a_2 = -0.428 \cdot 0.577 \approx -0.247 $$
+
+- **Gradient w.r.t. \( $z_3$ \)**:  
+
+  $$ 
+  \frac{\partial L}{\partial z_3} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z_3} 
+  $$  
+
+  where 
+
+  $$ 
+  \frac{\partial \hat{y}}{\partial z_3} = \sigma'(z_3) = \hat{y}(1-\hat{y}) = 0.572 \cdot 0.428 \approx 0.245 
+  $$  
+
+  $$ 
+  \frac{\partial L}{\partial z_3} = -1.747 \cdot 0.245 \approx -0.428
+  $$
+
+
+- **Gradient w.r.t. \( $w_3$ \)**:  
+
+  $$ 
+  \frac{\partial L}{\partial w_3} = \frac{\partial L}{\partial z_3} \cdot a_2 = -0.428 \cdot 0.577 \approx -0.247 
+  $$
 
 ### 🔙 Now, propagate back:
 
-- **Gradient w.r.t. \( z_2 \)**:  
-  $$ \frac{\partial L}{\partial z_2} = \frac{\partial L}{\partial z_3} \cdot w_3 \cdot \sigma'(z_2) $$  
-  where  
-  $$ \sigma'(z_2) = 0.577 \cdot (1 - 0.577) \approx 0.244 $$  
-  $$ \frac{\partial L}{\partial z_2} = -0.428 \cdot 0.5 \cdot 0.244 \approx -0.052 $$
+- **Gradient w.r.t. \( $z_2$ \)**:  
 
-- **Gradient w.r.t. \( w_2 \)**:  
-  $$ \frac{\partial L}{\partial w_2} = -0.052 \cdot 0.622 \approx -0.032 $$
+  $$ 
+  \frac{\partial L}{\partial z_2} = \frac{\partial L}{\partial z_3} \cdot w_3 \cdot \sigma'(z_2) 
+  $$  
 
-- **Gradient w.r.t. \( z_1 \)**:  
-  $$ \frac{\partial L}{\partial z_1} = \frac{\partial L}{\partial z_2} \cdot w_2 \cdot \sigma'(z_1) $$  
   where  
-  $$ \sigma'(z_1) = 0.622 \cdot 0.378 \approx 0.235 $$  
-  $$ \frac{\partial L}{\partial z_1} = -0.052 \cdot 0.5 \cdot 0.235 \approx -0.006 $$
-- **Gradient w.r.t. \( w_1 \)**:  
-  $$ \frac{\partial L}{\partial w_1} = -0.006 \cdot 1 \approx -0.006 $$
+  $$ 
+  \sigma'(z_2) = 0.577 \cdot (1 - 0.577) \approx 0.244 
+  $$  
+
+  $$ 
+  \frac{\partial L}{\partial z_2} = -0.428 \cdot 0.5 \cdot 0.244 \approx -0.052 
+  $$
+
+- **Gradient w.r.t. \( $w_2$ \)**:  
+
+  $$ 
+  \frac{\partial L}{\partial w_2} = -0.052 \cdot 0.622 \approx -0.032 
+  $$
+
+
+- **Gradient w.r.t. \( $z_1$ \)**:  
+
+  $$ 
+  \frac{\partial L}{\partial z_1} = \frac{\partial L}{\partial z_2} \cdot w_2 \cdot \sigma'(z_1)
+  $$
+
+  where
+
+  $$
+  \sigma'(z_1) = 0.622 \cdot 0.378 \approx 0.235 
+  $$  
+
+  $$
+   \frac{\partial L}{\partial z_1} = -0.052 \cdot 0.5 \cdot 0.235 \approx -0.006 
+   $$
+
+- **Gradient w.r.t. \( $w_1$ \)**:  
+  $$ 
+  \frac{\partial L}{\partial w_1} = -0.006 \cdot 1 \approx -0.006 
+  $$
+
 
 ---
 
@@ -1678,14 +1863,22 @@ For a mini-batch \( B = \{x_1, x_2, ..., x_m\} \) (where \( m \) is batch size):
 
 ### 2. Normalize:
 Standardize each input:  
-$$ \hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}} $$  
+
+$$ 
+\hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}} 
+$$  
+
 where \( $\epsilon$ \) is a small constant (e.g., \( $10^{-5}$ \)) for numerical stability.
 
 Result: \( $\hat{x}_i$ \) has mean 0 and variance 1 within the batch.
 
 ### 3. Scale and Shift:
 Apply learnable parameters \( $\gamma$ \) `scale` and \( $\beta$ \) `shift`:  
-$$ y_i = \gamma \hat{x}_i + \beta $$
+
+$$ 
+y_i = \gamma \hat{x}_i + \beta 
+$$
+
 
 Why? Allows the network to undo normalization if needed, preserving representational power.
 
@@ -1806,21 +1999,36 @@ Gradient Descent uses the gradient (partial derivative of the loss with respect 
 
 - **Compute the Loss**:
   - Forward pass generates predictions, and loss is calculated (e.g., cross-entropy for classification).
-  - Example:  
-    $$ L = -\log(0.7) \approx 0.357 $$  
+  - Example: 
+
+    $$ 
+    L = -\log(0.7) \approx 0.357 
+    $$  
+
     for prediction [0.3, 0.7] vs. ground truth [0, 1].
 
 - **Calculate Gradients via Backpropagation**:
   - Gradient:  
-    $$ \frac{\partial L}{\partial w} $$  
+
+    $$
+    \frac{\partial L}{\partial w} 
+    $$  
+
     shows how much the loss changes with a small change in weight \( w \).
   - Example:  
-    $$ \frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] $$  
+    $$
+    \frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] 
+    $$  
+
     propagated back to weights.
 
 - **Update Weights**:
-  - Rule:  
-    $$ w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w} $$  
+  - Rule:
+
+    $$
+     w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
+      $$  
+
     where *$\eta$*   (learning rate) controls step size.
   - Direction: Negative gradient points downhill (toward lower loss).
 
@@ -1833,13 +2041,20 @@ Gradient Descent uses the gradient (partial derivative of the loss with respect 
 
 Let’s use a toy regression example to illustrate (similar principles apply to CNNs):
 
-- **Model**:  
-  $$ \hat{y} = w \cdot x + b $$  
+- **Model**: 
+
+  $$ 
+  \hat{y} = w \cdot x + b 
+  $$  
+
   Predict \( $y = 4$ \) when \( $x = 2$ \)
 
 - **Loss**:  
   Mean Squared Error  
-  $$ L = (y - \hat{y})^2 $$
+
+  $$ 
+  L = (y - \hat{y})^2 
+  $$
 
 - **Initial Weights**:  
   \( $w = 1$ \), \( $b = 0$ \)
@@ -1951,11 +2166,19 @@ In my CNNs, like defect detection, mini-batch gradient descent tunes filters ove
 
 - **Gradient Computation**:  
   Backpropagation gives  
-  $$ \frac{\partial L}{\partial w} $$  
+
+  $$ 
+  \frac{\partial L}{\partial w} 
+  $$  
+
   the direction of steepest loss increase.
 
-- **Update Rule**:  
-  $$ w_{\text{new}} = w_{\text{old}} - \text{step} $$
+- **Update Rule**:
+
+  $$ 
+  w_{\text{new}} = w_{\text{old}} - \text{step} 
+  $$
+
 
 - **Step Size**:  
   Controlled by the learning rate \( $\eta$ \) and enhanced by optimizer-specific logic.
@@ -1978,19 +2201,25 @@ Where:
 ### 1. Gradient Descent (GD)
 - **How**: Updates weights using the full dataset’s gradient.  
 - **Update**:  
+
   $$
   w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L}{\partial w}
   $$
-- **Example**:  
+
+- **Example**:
+
   $$
   \hat{y} = 1 \cdot 2 = 2,\quad L = (4 - 2)^2 = 4
-  $$  
+  $$
+
   $$
   \frac{\partial L}{\partial w} = 2(2 - 4) \cdot 2 = -8
-  $$  
+  $$ 
+
   $$
   w = 1 - 0.1 \cdot (-8) = 1.8,\quad \hat{y} = 3.6,\quad L = 0.16
   $$
+
 - **Need**: Accurate but slow—impractical for large datasets.
 
 ---
@@ -2012,66 +2241,85 @@ Where:
 ### 4. Momentum
 - **How**: Adds velocity to SGD.  
 - **Update**:  
+
   $$
   v_t = \beta v_{t-1} + (1 - \beta) \cdot \frac{\partial L}{\partial w}
   $$  
+
   $$
   w = w - \eta \cdot v_t
   $$ 
+
   where $\beta$ (e.g., 0.9) is momentum.
-- **Example**:  
+- **Example**: 
+
   $$
   v_0 = 0,\quad \frac{\partial L}{\partial w} = -8
   $$  
+
   $$
   v_1 = 0.9 \cdot 0 + 0.1 \cdot (-8) = -0.8
   $$  
+
   $$
   w = 1 - 0.1 \cdot (-0.8) = 1.08
   $$
+
 - **Need**: Helps escape shallow minima, faster convergence.
 
 ---
 
 ### 5. AdaGrad (Adaptive Gradient)
 - **How**: Adapts $\eta$ per parameter.  
-- **Update**:  
+- **Update**: 
+
   $$
   G_t = G_{t-1} + \left(\frac{\partial L}{\partial w}\right)^2
-  $$  
+  $$ 
+
   $$
   w = w - \frac{\eta}{\sqrt{G_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
   $$
+
 - **Example**:  
   $$
   G_0 = 0,\quad \frac{\partial L}{\partial w} = -8,\quad G_1 = 64
   $$  
+
   $$
   w = 1 - \frac{0.1}{\sqrt{64 + 10^{-8}}} \cdot (-8) = 1.1
   $$
+
 - **Need**: Great for sparse data, but slows too much.
 
 ---
 
 ### 6. RMSProp (Root Mean Square Propagation)
 - **How**: Uses exponentially decaying average of gradients.  
-- **Update**:  
+- **Update**: 
+
   $$
   E[G^2]_t = \rho E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
-  $$  
+  $$ 
+
   $$
   w = w - \frac{\eta}{\sqrt{E[G^2]_t + \epsilon}} \cdot \frac{\partial L}{\partial w}
   $$
-- **Example**:  
+
+- **Example**: 
+
   $$
   E[G^2]_0 = 0,\quad \frac{\partial L}{\partial w} = -8
   $$  
+
   $$
   E[G^2]_1 = 0.9 \cdot 0 + 0.1 \cdot 64 = 6.4
   $$  
+
   $$
   w = 1 - \frac{0.1}{\sqrt{6.4}} \cdot (-8) \approx 1.316
   $$
+
 - **Need**: Prevents AdaGrad’s stalling, good for non-convex loss.
 
 ---
@@ -2079,26 +2327,34 @@ Where:
 ### 7. Adam (Adaptive Moment Estimation)
 - **How**: Combines momentum and RMSProp.  
 - **Update**:  
+
   $$
   m_t = \beta_1 m_{t-1} + (1 - \beta_1) \frac{\partial L}{\partial w}
   $$  
+
   $$
   v_t = \beta_2 v_{t-1} + (1 - \beta_2) \left(\frac{\partial L}{\partial w}\right)^2
   $$  
+
   $$
   \hat{m}_t = \frac{m_t}{1 - \beta_1^t},\quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}
   $$  
+
   $$
   w = w - \frac{\eta \hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
   $$
+
 - **Example**:  
   $$
   m_1 = 0.1 \cdot (-8) = -0.8,\quad v_1 = 0.001 \cdot 64 = 0.064
   $$  
-  After bias correction,  
+
+  After bias correction, 
+
   $$
   w \approx 1.8
   $$
+
 - **Need**: Robust and fast—default in many deep learning tasks.
 
 ## 🚀 Why Different Optimizers?
@@ -2177,9 +2433,11 @@ The key difference lies in how much data they use to compute these gradients and
   - Update weights once using this gradient.
 
 - **Update Rule**:
+
   $$
   w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{1}{N} \sum_{i=1}^{N} \frac{\partial L_i}{\partial w}
   $$
+
 
   Where:
   - \( $N$ \): Total number of samples  
@@ -2199,9 +2457,11 @@ The key difference lies in how much data they use to compute these gradients and
   - Update weights immediately using this gradient.
 
 - **Update Rule**:
+
   $$
   w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial L_i}{\partial w}
   $$
+
 
   Where:
   - \( $L_i$ \): Loss for the current sample \( $i$ \)
@@ -2227,34 +2487,42 @@ Let’s use a toy problem to compare:
 ### 🧮 Gradient Descent (GD)
 
 - **Forward Pass (All Samples)**:
+
   $$
   \hat{y}_1 = 1 \cdot 2 = 2,\quad L_1 = (4 - 2)^2 = 4 \\
   \hat{y}_2 = 1 \cdot 1 = 1,\quad L_2 = (2 - 1)^2 = 1 \\
   \hat{y}_3 = 1 \cdot 3 = 3,\quad L_3 = (6 - 3)^2 = 9
   $$
+
   $$
   \text{Total Loss: } L = \frac{4 + 1 + 9}{3} = 4.67
   $$
 
+
 - **Gradient**:
+
   $$
   \frac{\partial L_i}{\partial w} = 2 (\hat{y}_i - y_i) \cdot x_i
   $$
+
   $$
   \text{Sample 1: } 2 (2 - 4) \cdot 2 = -8 \\
   \text{Sample 2: } 2 (1 - 2) \cdot 1 = -2 \\
   \text{Sample 3: } 2 (3 - 6) \cdot 3 = -18
   $$
+
   $$
   \text{Average Gradient: } \frac{-8 + (-2) + (-18)}{3} = -9.33
   $$
 
 - **Update**:
+
   $$
   w = 1 - 0.1 \cdot (-9.33) = 1 + 0.933 = 1.933
   $$
 
 - **Next Loss**:
+
   $$
   L \approx 0.18 \quad \text{(averaged across all samples)}
   $$
@@ -2266,25 +2534,31 @@ Let’s use a toy problem to compare:
 ### ⚡ Stochastic Gradient Descent (SGD)
 
 - **Sample 1** \( (x = 2, y = 4) \):
+
   $$
   \hat{y} = 1 \cdot 2 = 2,\quad L = 4 \\
   \text{Gradient: } 2 (2 - 4) \cdot 2 = -8 \\
   w = 1 - 0.1 \cdot (-8) = 1.8
   $$
 
+
 - **Sample 2** \( (x = 1, y = 2) \):
+
   $$
   \hat{y} = 1.8 \cdot 1 = 1.8,\quad L = (2 - 1.8)^2 = 0.04 \\
   \text{Gradient: } 2 (1.8 - 2) \cdot 1 = -0.4 \\
   w = 1.8 - 0.1 \cdot (-0.4) = 1.84
   $$
 
+
 - **Sample 3** \( (x = 3, y = 6) \):
+
   $$
   \hat{y} = 1.84 \cdot 3 = 5.52,\quad L = (6 - 5.52)^2 = 0.23 \\
   \text{Gradient: } 2 (5.52 - 6) \cdot 3 = -2.88 \\
   w = 1.84 - 0.1 \cdot (-2.88) = 2.128
   $$
+
 
 - **Next Epoch**: Loss keeps dropping with more updates.
 
@@ -2374,9 +2648,11 @@ SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD
 
 ### 🧮 Class Weights
 - **How**: Adjust loss  
+
   $[
   L = -w_c y_c \\log(p_c)
   ]$  
+
   Higher weights for rare classes (e.g., dog: 10 vs. cat: 1.11).
 - **Example**: Loss for dog misprediction dominates, improving recall.
 
@@ -2612,54 +2888,71 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 
 ### 🔹 Accuracy
 - **Definition**: Fraction of correct predictions.
-- **Formula**:  
+- **Formula**: 
+
   $$
   \text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
   $$
+
 - **Example**:  
-  TP = 90, TN = 900, FP = 10, FN = 100  
+
+  TP = 90, TN = 900, FP = 10, FN = 100 
+
   $$
   \text{Accuracy} = \frac{90 + 900}{90 + 900 + 10 + 100} = 0.9 \ (90\%)
   $$
+
 - **Use**: Good for balanced datasets.
 
 ### 🔹 Precision
 - **Definition**: Fraction of positive predictions that are correct.
-- **Formula**:  
+- **Formula**: 
+
   $$
   \text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
   $$
+
 - **Example**:  
-  TP = 90, FP = 10  
+  TP = 90, FP = 10 
+
   $$
   \text{Precision} = \frac{90}{90 + 10} = 0.9 \ (90\%)
   $$
+
 - **Use**: Critical when false positives are costly.
 
 ### 🔹 Recall (Sensitivity)
 - **Definition**: Fraction of actual positives correctly identified.
-- **Formula**:  
+- **Formula**:
+
   $$
   \text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
   $$
+
 - **Example**:  
   TP = 90, FN = 100  
+
   $$
   \text{Recall} = \frac{90}{90 + 100} \approx 0.47 \ (47\%)
   $$
+
 - **Use**: Key for rare defect detection.
 
 ### 🔹 F1-Score
 - **Definition**: Harmonic mean of precision and recall.
 - **Formula**:  
+
   $$
   \text{F1} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
   $$
+
 - **Example**:  
-  Precision = 0.9, Recall = 0.47  
+  Precision = 0.9, Recall = 0.47 
+
   $$
   \text{F1} \approx 0.62
   $$
+
 - **Use**: Balances precision/recall trade-off.
 
 ### 🔹 ROC-AUC
@@ -2676,46 +2969,61 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 ### 🔹 Mean Squared Error (MSE)
 - **Definition**: Average squared difference between predicted and true values.
 - **Formula**:  
+
   $$
   \text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
   $$
-- **Example**:  
+
+- **Example**: 
+
   $$
   y = [10, 20], \hat{y} = [12, 19] \Rightarrow \text{MSE} = \frac{4 + 1}{2} = 2.5
   $$
 
+
 ### 🔹 Mean Absolute Error (MAE)
 - **Definition**: Average absolute difference.
-- **Formula**:  
+- **Formula**: 
+
   $$
   \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
   $$
+
 - **Example**:  
   $$
   \text{MAE} = \frac{2 + 1}{2} = 1.5
   $$
 
+
 ### 🔹 Root Mean Squared Error (RMSE)
 - **Definition**: Square root of MSE.
 - **Formula**:  
+
   $$
   \text{RMSE} = \sqrt{\text{MSE}}
   $$
+
 - **Example**:  
+
   $$
   \text{RMSE} = \sqrt{2.5} \approx 1.58
   $$
 
+
 ### 🔹 R² (Coefficient of Determination)
 - **Definition**: Proportion of variance explained by the model.
-- **Formula**:  
+- **Formula**: 
+
   $$
   R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}
   $$
-- **Example**:  
+
+- **Example**: 
+
   $$
   R^2 = 0.9 \Rightarrow 90\% \text{ variance explained}
   $$
+
 
 ---
 
@@ -2726,17 +3034,21 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 ### 🔹 Intersection over Union (IoU)
 - **Definition**: Overlap between predicted and ground truth boxes.
 - **Formula**:  
+
   $$
   \text{IoU} = \frac{\text{Area of Intersection}}{\text{Area of Union}}
   $$
+
 - **Example**: IoU ≈ 0.81
 
 ### 🔹 Precision and Recall (with IoU)
 - **Definition**: TP if IoU > threshold (e.g., 0.5), else FP.
 - **Example**:  
+
   $$
   \text{Precision} = \frac{4}{5} = 0.8, \quad \text{Recall} = \frac{4}{6} \approx 0.67
   $$
+
 
 ### 🔹 Average Precision (AP)
 - **Definition**: Area under precision-recall curve at a specific IoU.
@@ -2755,36 +3067,47 @@ In my segmentation work, dropout after dense layers cut overfitting, ensuring re
 ### 🔹 Pixel Accuracy
 - **Definition**: Fraction of correctly classified pixels.
 - **Formula**:  
+
   $$
   \text{Accuracy} = \frac{\text{Correct Pixels}}{\text{Total Pixels}}
   $$
 
+
 ### 🔹 Intersection over Union (IoU)
 - **Formula**:  
+
   $$
   \text{IoU} = \frac{\text{TP}}{\text{TP} + \text{FP} + \text{FN}}
   $$
+
 - **Example**:  
+
   $$
   \text{IoU} = \frac{50}{50 + 10 + 20} = 0.625
   $$
 
+
 ### 🔹 Dice Coefficient
 - **Formula**:  
+
   $$
   \text{Dice} = \frac{2 \cdot \text{TP}}{2 \cdot \text{TP} + \text{FP} + \text{FN}}
   $$
+
 - **Example**:  
   $$
   \text{Dice} = \frac{2 \cdot 50}{2 \cdot 50 + 10 + 20} \approx 0.77
   $$
 
+
 ### 🔹 Mean IoU (mIoU)
 - **Definition**: Average IoU across all classes.
 - **Example**:  
+
   $$
   \text{mIoU} = \frac{0.625 + 0.95}{2} = 0.7875
   $$
+
 
 ---
 
@@ -2832,9 +3155,11 @@ With skip layers, the flow includes shortcuts:
 - **Backward Pass (Backpropagation)**:
   - Gradients flow through both the skip path and the main path.
   - Gradient of loss w.r.t. ( x ):  
+
   $$
     \frac{\partial L}{\partial x} = \frac{\partial L}{\partial y} \cdot (1 + \frac{\partial F(x)}{\partial x}).
     $$
+
   - The “1” from the skip path ensures gradients don’t vanish, even if $
   \frac{\partial F(x)}{\partial x}$ is small.
 
@@ -3051,9 +3376,9 @@ Skip layers are especially effective in reducing **underfitting** in deep neural
 
 ### 🔁 Combat Vanishing Gradients
 - **How**: Skip connections ensure gradients reach early layers:
-  \[
+  $[
   \frac{\partial L}{\partial x} \geq 1
-  \]
+  ]$
 - **Impact**: Prevents early layers from staying static.
 - **Example**:  
   In your 50-layer segmentation CNN:  
@@ -3107,7 +3432,7 @@ Skip layers are most effective when:
 ### 📉 Underfitting
 - **Effect**: Skip layers **directly** reduce underfitting.
 - **How They Help**:
-  - Improve gradient flow (e.g., \(\frac{\partial L}{\partial x} \geq 1\))
+  - Improve gradient flow (e.g., $(\frac{\partial L}{\partial x} \geq 1)$)
   - Enable deeper, more expressive models
   - Preserve early-layer information (e.g., edges)
 
