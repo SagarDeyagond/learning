@@ -341,7 +341,13 @@ For 900 "no crack" and 100 "crack":
 
 $$
 \text{Total samples} = 1000 \\\\[5pt]
+$$
+
+$$
 \text{Weight for ``no crack''} = \frac{1000}{900} \approx 1.11 \\\\[5pt]
+$$
+
+$$
 \text{Weight for ``crack''} = \frac{1000}{100} = 10
 $$
 
@@ -1031,10 +1037,12 @@ $$
 - **Task**: Classify an image as "cat," "dog," or "bird" (\( $C = 3$ \))
 - **True Label**: "Dog" → \([0, 1, 0]\)
 - **Predicted**: \([0.2, 0.7, 0.1]\)
-- **Loss**:  
+- **Loss**: 
+
 $$
 L = -[0 \cdot \log(0.2) + 1 \cdot \log(0.7) + 0 \cdot \log(0.1)] = -\log(0.7) \approx 0.357
 $$
+
 
 **Key Point**:  
 Used with **softmax** activation for multi-class problems.
@@ -2032,9 +2040,11 @@ $$
 
 shows how much the loss changes with a small change in weight \( w \).
 - Example:  
+
 $$
 \frac{\partial L}{\partial \hat{y}} = [0.3, -0.3] 
 $$  
+
 
 propagated back to weights.
 
@@ -2319,6 +2329,7 @@ $$
 $$
 E[G^2]_t = \rho E[G^2]_{t-1} + (1 - \rho) \left(\frac{\partial L}{\partial w}\right)^2
 $$ 
+
 
 
 $$
@@ -2645,7 +2656,7 @@ $$
 ## 🎯 Interview-Ready Answer
 
 **Q: What’s the difference between GD and SGD?**  
-**A:** Gradient Descent uses the entire dataset to compute an average gradient and update weights once per epoch, like moving $( w )$ from 1 to 1.933 with a precise -9.33 gradient for three samples.  
+**A:** Gradient Descent uses the entire dataset to compute an average gradient and update weights once per epoch, like moving $(w)$ from 1 to 1.933 with a precise -9.33 gradient for three samples.  
 Stochastic Gradient Descent updates weights per sample, like stepping from 1 to 1.8, 1.84, then 2.128 across the same samples — faster but noisier.  
 GD is accurate but slow, ideal for small datasets;  
 SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD (e.g., 32 samples) balances speed and stability, dropping loss from 2.0 to 0.5 in fewer epochs.
@@ -2682,12 +2693,12 @@ SGD scales to large ones, like my 10,000-image defect CNNs, where mini-batch SGD
 ### 🔁 Feedforward & Backpropagation
 - **Feedforward**: Input → layers → output (e.g., image to [0.7, 0.3]).
 - **Backpropagation**: Loss → gradients → weight updates  
-  e.g., $ w = w - 0.1 \cdot (-0.3)$ .
+  e.g., $w = w - 0.1 \cdot (-0.3)$ .
 - **Need**: Predictions and learning.
 
 ### 📉 Loss & Cost Functions
-- **Classification**: Cross-entropy (e.g., $( -\\log(0.7) = 0.357 )$).
-- **Regression**: MSE (e.g., $( (10 - 12)^2 = 4 )$).
+- **Classification**: Cross-entropy (e.g., $(-\\log(0.7) = 0.357 )$).
+- **Regression**: MSE (e.g., $((10 - 12)^2 = 4 )$).
 - **Object Detection**: Combined (e.g., box MSE + class CE).
 - **Segmentation**: Pixel-wise CE or Dice (e.g., overlap-based).
 
